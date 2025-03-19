@@ -1,0 +1,145 @@
+:root {
+  --primary: #3b5998;
+  --primary-light: #8b9dc3;
+  --primary-dark: #2a4173;
+  --secondary: #f7b731;
+  --text-dark: #333333;
+  --text-light: #ffffff;
+  --background-light: #f5f7fa;
+  --background-dark: #2c3e50;
+  --youth-color: #e74c3c;
+  --parent-color: #3498db;
+  --senior-color: #9b59b6;
+  --success: #2ecc71;
+  --error: #e74c3c;
+  
+  font-family: 'Lato', system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: var(--text-dark);
+  background-color: var(--background-light);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+a {
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.25s;
+}
+
+a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--primary);
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+button:hover {
+  background-color: var(--primary-dark);
+}
+
+button:focus,
+button:focus-visible {
+  outline: 3px solid var(--primary-light);
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  color: var(--text-dark);
+}
+
+.btn-secondary:hover {
+  background-color: #e5a92a;
+}
+
+.btn-large {
+  font-size: 1.2em;
+  padding: 0.8em 1.5em;
+}
+
+.text-center {
+  text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: var(--text-light);
+    background-color: var(--background-dark);
+  }
+  
+  a {
+    color: var(--primary-light);
+  }
+  
+  a:hover {
+    color: var(--secondary);
+  }
+  
+  .btn-secondary {
+    background-color: var(--secondary);
+    color: var(--background-dark);
+  }
+}
+
+/* Accessibility features */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.high-contrast {
+  --primary: #0066CC;
+  --primary-light: #4D94FF;
+  --primary-dark: #004080;
+  --text-dark: #000000;
+  --text-light: #FFFFFF;
+  --background-light: #FFFFFF;
+  --background-dark: #000000;
+  --youth-color: #CC0000;
+  --parent-color: #0066CC;
+  --senior-color: #6600CC;
+}
+
+.large-text {
+  font-size: 120%;
+}
