@@ -123,6 +123,10 @@ header {
   margin: 3rem 0;
 }
 
+.section-title {
+  color: rgba(3, 31, 63, 0.864);
+}
+
 .demo-content {
   display: flex;
   flex-direction: column;

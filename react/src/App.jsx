@@ -177,10 +177,10 @@ function App() {
           </section>
           
           <section id="demo" className="demo-section">
-            <h2 className="text-center">See How It Works</h2>
+            <h2 className="text-center section-title">See How It Works</h2>
             <div className="demo-content">
               <div className="demo-messages">
-                <h3>Smart Messaging System</h3>
+                <h3 className="section-title">Smart Messaging System</h3>
                 <div className="message youth">
                   <strong>Youth Message:</strong> Hey Jordan! 🙌 Don't forget Youth Bible Study tomorrow @ 6PM. Reply YES if you're coming! Need a ride? Reply RIDE
                 </div>
