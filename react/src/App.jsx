@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import './App.css'
+import Login from './Login';
+import Register from './Register';
 
 // Mock data for demonstration
 const upcomingEvents = [
@@ -36,6 +38,10 @@ function App() {
     highContrast: false,
     largeText: false
   })
+  
+  // Add state for auth modals
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
 
   const toggleHighContrast = () => {
     setAccessibilityMode({
@@ -50,54 +56,84 @@ function App() {
       largeText: !accessibilityMode.largeText
     })
   }
+  
+  // Auth modal handlers
+  const openLogin = () => {
+    setShowLogin(true);
+    setShowRegister(false);
+  };
+  
+  const openRegister = () => {
+    setShowRegister(true);
+    setShowLogin(false);
+  };
+  
+  const closeAuthModals = () => {
+    setShowLogin(false);
+    setShowRegister(false);
+  };
+  
+  const switchToRegister = () => {
+    setShowLogin(false);
+    setShowRegister(true);
+  };
+  
+  const switchToLogin = () => {
+    setShowRegister(false);
+    setShowLogin(true);
+  };
 
   // Generate calendar days for demo
   const calendarDays = Array.from({ length: 28 }, (_, i) => i + 1)
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
+  
   return (
     <div className={`${accessibilityMode.highContrast ? 'high-contrast' : ''} ${accessibilityMode.largeText ? 'large-text' : ''}`}>
       <header>
-      <div className="app-container header-content">
-    <div className="logo">
-      <img src="/church-icon.svg" alt="Faith Connect Logo" />
-      <h1>Faith Connect</h1>
-    </div>
-    
-    <nav className="nav-links">
-      <a href="#features">Features</a>
-      <a href="#demo">Demo</a>
-      <a href="#testimonials">Testimonials</a>
-      <a href="#contact">Contact</a>
-    </nav>
-    
-    <div className="auth-controls">
-      <button className="login-btn">Log In</button>
-      <button className="signup-btn">Sign Up</button>
-    </div>
-    
-    <div className="accessibility-controls">
-      {/* <button 
-        onClick={toggleHighContrast}
-        aria-label="Toggle high contrast mode"
-        title="Toggle high contrast mode"
-      >
-        {accessibilityMode.highContrast ? 'Standard Contrast' : 'High Contrast'}
-      </button>
-      <button 
-        onClick={toggleLargeText}
-        aria-label="Toggle large text mode"
-        title="Toggle large text mode"
-      >
-        {accessibilityMode.largeText ? 'Standard Text' : 'Large Text'}
-      </button> */}
-    </div>
-    
-    <button className="mobile-menu-button" aria-label="Open menu">
-      ☰
-    </button>
-  </div>
+        <div className="app-container header-content">
+          <div className="logo">
+            <img src="/church-icon.svg" alt="Faith Connect Logo" />
+            <h1>Faith Connect</h1>
+          </div>
+          
+          <nav className="nav-links">
+            <a href="#features">Features</a>
+            <a href="#demo">Demo</a>
+            <a href="#testimonials">Testimonials</a>
+            <a href="#contact">Contact</a>
+          </nav>
+          
+          <div className="auth-controls">
+            <button className="login-btn" onClick={openLogin}>Log In</button>
+            <button className="signup-btn" onClick={openRegister}>Sign Up</button>
+          </div>
+          
+          <div className="accessibility-controls">
+            {/* <button 
+              onClick={toggleHighContrast}
+              aria-label="Toggle high contrast mode"
+              title="Toggle high contrast mode"
+            >
+              {accessibilityMode.highContrast ? 'Standard Contrast' : 'High Contrast'}
+            </button>
+            <button 
+              onClick={toggleLargeText}
+              aria-label="Toggle large text mode"
+              title="Toggle large text mode"
+            >
+              {accessibilityMode.largeText ? 'Standard Text' : 'Large Text'}
+            </button> */}
+          </div>
+          
+          <button className="mobile-menu-button" aria-label="Open menu">
+            ☰
+          </button>
+        </div>
       </header>
+      
+      {/* Auth Modals */}
+      {showLogin && <Login onClose={closeAuthModals} onSwitchToRegister={switchToRegister} />}
+      {showRegister && <Register onClose={closeAuthModals} onSwitchToLogin={switchToLogin} />}
       
       <main>
         <section className="hero">
@@ -242,32 +278,31 @@ function App() {
           </section>
           
           <section id="contact" className="contact-section">
-  <h2>Have Questions?</h2>
-  <form className="contact-form">
-    <div className="form-group">
-      <label htmlFor="name">Name</label>
-      <input type="text" id="name" name="name" required />
-    </div>
-    
-    <div className="form-group">
-      <label htmlFor="email">Email</label>
-      <input type="email" id="email" name="email" required />
-    </div>
-    
-    <div className="form-group">
-      <label htmlFor="church">Church Name</label>
-      <input type="text" id="church" name="church" />
-    </div>
-    
-    <div className="form-group">
-      <label htmlFor="message">Message</label>
-      <textarea id="message" name="message" rows="5" required></textarea>
-    </div>
-    
-    <button type="submit" className="send-message-btn">Send Message</button>
-  </form>
-</section>
-
+            <h2>Have Questions?</h2>
+            <form className="contact-form">
+              <div className="form-group">
+                <label htmlFor="name">Name</label>
+                <input type="text" id="name" name="name" required />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input type="email" id="email" name="email" required />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="church">Church Name</label>
+                <input type="text" id="church" name="church" />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="message">Message</label>
+                <textarea id="message" name="message" rows="5" required></textarea>
+              </div>
+              
+              <button type="submit" className="send-message-btn">Send Message</button>
+            </form>
+          </section>
         </div>
       </main>
       
