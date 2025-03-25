@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './LR.css';
 
-function Register({ onClose, onSwitchToLogin }) {
+function Register({ onClose, onSwitchToLogin, onRegister }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -46,8 +46,9 @@ function Register({ onClose, onSwitchToLogin }) {
     if (validate()) {
       console.log('Registration form submitted:', formData);
       // Here you would typically make an API call to register the user
-      // For demo purposes, we'll just close the modal
-      onClose();
+      // For demo purposes, we'll just close the modal and redirect
+      // Call the onRegisterSuccess prop to redirect to Home.jsx
+      onRegister(formData);
     }
   };
 

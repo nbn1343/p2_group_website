@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import Login from './Login';
 import Register from './Register';
+import Home from './Home.jsx';
 
 // Mock data for demonstration
 const upcomingEvents = [
@@ -37,25 +38,27 @@ function App() {
   const [accessibilityMode, setAccessibilityMode] = useState({
     highContrast: false,
     largeText: false
-  })
+  });
   
-  // Add state for auth modals
+  // Add state for auth modals and user authentication
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userData, setUserData] = useState(null);
 
   const toggleHighContrast = () => {
     setAccessibilityMode({
       ...accessibilityMode,
       highContrast: !accessibilityMode.highContrast
-    })
-  }
+    });
+  };
 
   const toggleLargeText = () => {
     setAccessibilityMode({
       ...accessibilityMode,
       largeText: !accessibilityMode.largeText
-    })
-  }
+    });
+  };
   
   // Auth modal handlers
   const openLogin = () => {
@@ -82,17 +85,41 @@ function App() {
     setShowRegister(false);
     setShowLogin(true);
   };
+  
+  // Authentication handlers
+  const handleLogin = (userData) => {
+    setUserData(userData);
+    setIsAuthenticated(true);
+    closeAuthModals();
+  };
+  
+  const handleRegister = (userData) => {
+    setUserData(userData);
+    setIsAuthenticated(true);
+    closeAuthModals();
+  };
+  
+  const handleLogout = () => {
+    setUserData(null);
+    setIsAuthenticated(false);
+  };
 
   // Generate calendar days for demo
-  const calendarDays = Array.from({ length: 28 }, (_, i) => i + 1)
-  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const calendarDays = Array.from({ length: 28 }, (_, i) => i + 1);
+  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   
+  // If user is authenticated, show the main dashboard
+  if (isAuthenticated) {
+    return <Home userData={userData} onLogout={handleLogout} />;
+  }
+  
+  // Otherwise show the landing page with login/register functionality
   return (
     <div className={`${accessibilityMode.highContrast ? 'high-contrast' : ''} ${accessibilityMode.largeText ? 'large-text' : ''}`}>
       <header>
         <div className="app-container header-content">
           <div className="logo">
-            <img src="/church-icon.svg" alt="Faith Connect Logo" />
+            <img src="/src/assets/Logo.png" alt="Faith Connect Logo" />
             <h1>Faith Connect</h1>
           </div>
           
@@ -132,8 +159,8 @@ function App() {
       </header>
       
       {/* Auth Modals */}
-      {showLogin && <Login onClose={closeAuthModals} onSwitchToRegister={switchToRegister} />}
-      {showRegister && <Register onClose={closeAuthModals} onSwitchToLogin={switchToLogin} />}
+      {showLogin && <Login onClose={closeAuthModals} onSwitchToRegister={switchToRegister} onLogin={handleLogin} />}
+      {showRegister && <Register onClose={closeAuthModals} onSwitchToLogin={switchToLogin} onRegister={handleRegister} />}
       
       <main>
         <section className="hero">
@@ -349,7 +376,7 @@ function App() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

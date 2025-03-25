@@ -1,4 +1,9 @@
 :root {
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease;
+  --widget-bg: #2a3847;
+  --widget-header: #243141;
+  --teal: #4ecdc4;
   --primary: #0588A6;
   --primary-light: #8b9dc3;
   --primary-dark: #2a4173;

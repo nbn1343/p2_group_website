@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import './LR.css';
+import Home from './Home.jsx';
 
-function Login({ onClose, onSwitchToRegister }) {
+function Login({ onClose, onSwitchToRegister, onLogin }) {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -34,10 +35,11 @@ function Login({ onClose, onSwitchToRegister }) {
     if (validate()) {
       console.log('Login form submitted:', formData);
       // Here you would typically make an API call to authenticate the user
-      // For demo purposes, we'll just close the modal
-      onClose();
+      onLogin(formData);
     }
   };
+
+
 
   return (
     <div className="auth-modal">
