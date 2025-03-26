@@ -36,7 +36,7 @@ function Login({ onClose, onSwitchToRegister, onLogin }) {
 		e.preventDefault();
 		if (validate()) {
 			// Call Supabase sign-in method
-			const { data, error } = await supabase.auth.signInWithPassword({
+			const { error } = await supabase.auth.signInWithPassword({
 				email: formData.email,
 				password: formData.password,
 			});
@@ -44,7 +44,7 @@ function Login({ onClose, onSwitchToRegister, onLogin }) {
 				console.error("Error logging in:", error.message);
 				// Handle the error (display a message to the user, etc.)
 			} else {
-				console.log("Login successful:", data);
+				console.log("Login successful");
 				onLogin(formData);
 			}
 		}
