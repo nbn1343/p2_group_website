@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './LR.css';
+import '../design/LR.css';
 import Home from './Home.jsx';
 
 function Login({ onClose, onSwitchToRegister, onLogin }) {

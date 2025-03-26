@@ -1,8 +1,9 @@
+//App.jsx
 import { useState } from 'react'
-import './App.css'
-import Login from './Login';
-import Register from './Register';
-import Home from './Home.jsx';
+import './design/App.css'
+import Login from './components/Login.jsx';
+import Register from './components/Register.jsx';
+import Home from './components/Home.jsx';
 
 // Mock data for demonstration
 const upcomingEvents = [
@@ -104,10 +105,6 @@ function App() {
     setIsAuthenticated(false);
   };
 
-  // Generate calendar days for demo
-  const calendarDays = Array.from({ length: 28 }, (_, i) => i + 1);
-  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  
   // If user is authenticated, show the main dashboard
   if (isAuthenticated) {
     return <Home userData={userData} onLogout={handleLogout} />;
@@ -120,7 +117,6 @@ function App() {
         <div className="app-container header-content">
           <div className="logo">
             <img src="/src/assets/Logo.png" alt="Faith Connect Logo" />
-            <h1>Faith Connect</h1>
           </div>
           
           <nav className="nav-links">
@@ -240,58 +236,168 @@ function App() {
           </section>
           
           <section id="demo" className="demo-section">
-            <h2 className="text-center section-title">See How It Works</h2>
-            <div className="demo-content">
-              <div className="demo-messages">
-                <h3 className="section-title">Smart Messaging System</h3>
-                <div className="message youth">
-                  <strong>Youth Message:</strong> Hey Jordan! 🙌 Don't forget Youth Bible Study tomorrow @ 6PM. Reply YES if you're coming! Need a ride? Reply RIDE
+            <h2 className="text-center section-title">Experience Our Dashboard</h2>
+            <div className="demo-dashboard">
+              {/* Events Widget */}
+              <div className="demo-widget events-widget">
+                <div className="widget-header">
+                  <h3>Upcoming Events</h3>
+                  <button className="widget-action-btn">+ Add</button>
                 </div>
-                <div className="message parent">
-                  <strong>Parent Message:</strong> Hello Mrs. Smith, This is a reminder that the Parent Committee meeting is scheduled for tomorrow, March 21st at 7:00 PM in the Fellowship Hall. Childcare will be provided. Please reply with the number of children attending.
+                <div className="widget-content">
+                  <ul className="events-list">
+                    <li className="event-item">
+                      <div className="event-date">
+                        <span className="event-day">26</span>
+                        <span className="event-month">Mar</span>
+                      </div>
+                      <div className="event-details">
+                        <h3>Youth Bible Study</h3>
+                        <p>6:00 PM • Youth Room</p>
+                      </div>
+                    </li>
+                    <li className="event-item">
+                      <div className="event-date">
+                        <span className="event-day">28</span>
+                        <span className="event-month">Mar</span>
+                      </div>
+                      <div className="event-details">
+                        <h3>Parent Committee</h3>
+                        <p>7:00 PM • Fellowship Hall</p>
+                      </div>
+                    </li>
+                    <li className="event-item">
+                      <div className="event-date">
+                        <span className="event-day">30</span>
+                        <span className="event-month">Mar</span>
+                      </div>
+                      <div className="event-details">
+                        <h3>Sunday Service</h3>
+                        <p>10:00 AM • Main Sanctuary</p>
+                      </div>
+                    </li>
+                  </ul>
+                  <button className="view-all-btn">View All Events</button>
                 </div>
-                <div className="message senior">
-                  <strong>Senior Message:</strong> Senior Luncheon tomorrow at 12:00 PM. Transportation available. Reply NEED RIDE if you require transportation. [Voice message available]
+              </div>
+
+              {/* Calendar Widget */}
+              <div className="demo-widget calendar-widget">
+                <div className="widget-header">
+                  <h3>Calendar</h3>
+                  <div className="calendar-navigation">
+                    <button>◀</button>
+                    <h3>March 2025</h3>
+                    <button>▶</button>
+                  </div>
+                </div>
+                <div className="widget-content">
+                  <div className="calendar-grid">
+                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                      <div key={day} className="calendar-day-header">{day}</div>
+                    ))}
+                    
+                    {Array.from({ length: 31 }, (_, i) => {
+                      const day = i + 1;
+                      const hasEvent = [26, 28, 30].includes(day);
+                      return (
+                        <div key={day} className={`calendar-day ${hasEvent ? 'has-event' : ''}`}>
+                          {day}
+                          {hasEvent && <div className="event-indicator"></div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Groups Widget */}
+              <div className="demo-widget groups-widget">
+                <div className="widget-header">
+                  <h3>Groups</h3>
+                  <button className="widget-action-btn">+ Join</button>
+                </div>
+                <div className="widget-content">
+                  <ul className="groups-list">
+                    <li className="group-item">
+                      <div className="group-icon">Y</div>
+                      <div className="group-details">
+                        <h3>Youth Ministry</h3>
+                        <p>24 members • <span className="role-badge">Member</span></p>
+                      </div>
+                    </li>
+                    <li className="group-item">
+                      <div className="group-icon">W</div>
+                      <div className="group-details">
+                        <h3>Worship Team</h3>
+                        <p>12 members • <span className="role-badge">Leader</span></p>
+                      </div>
+                    </li>
+                    <li className="group-item">
+                      <div className="group-icon">B</div>
+                      <div className="group-details">
+                        <h3>Bible Study</h3>
+                        <p>18 members • <span className="role-badge">Member</span></p>
+                      </div>
+                    </li>
+                  </ul>
+                  <button className="view-all-btn">View All Groups</button>
+                </div>
+              </div>
+
+              {/* Reminders Widget */}
+              <div className="demo-widget reminders-widget">
+                <div className="widget-header">
+                  <h3>Reminders</h3>
+                  <button className="widget-action-btn">+ Add</button>
+                </div>
+                <div className="widget-content">
+                  <ul className="reminders-list">
+                    <li className="reminder-item priority-high">
+                      <input type="checkbox" id="reminder-1" />
+                      <div className="reminder-details">
+                        <label htmlFor="reminder-1">Prepare worship slides</label>
+                        <p>Due: March 26, 2025</p>
+                      </div>
+                    </li>
+                    <li className="reminder-item priority-medium">
+                      <input type="checkbox" id="reminder-2" />
+                      <div className="reminder-details">
+                        <label htmlFor="reminder-2">Bring snacks for youth group</label>
+                        <p>Due: March 26, 2025</p>
+                      </div>
+                    </li>
+                    <li className="reminder-item priority-medium">
+                      <input type="checkbox" id="reminder-3" />
+                      <div className="reminder-details">
+                        <label htmlFor="reminder-3">Call new members</label>
+                        <p>Due: March 29, 2025</p>
+                      </div>
+                    </li>
+                  </ul>
+                  <button className="view-all-btn">View All Reminders</button>
                 </div>
               </div>
               
-              <div className="calendar-preview">
-                <h3>Multi-Generational Calendar</h3>
-                <div className="calendar-header">
-                  <button>◀ Previous</button>
-                  <h4>March 2025</h4>
-                  <button>Next ▶</button>
-                </div>
-                <div className="calendar-grid">
-                  {weekdays.map(day => (
-                    <div key={day} className="calendar-day-header">{day}</div>
-                  ))}
-                  
-                  {calendarDays.map(day => (
-                    <div key={day} className="calendar-day">
-                      <div>{day}</div>
-                      {upcomingEvents.find(event => new Date(event.date).getDate() === day) && (
-                        <div className={`calendar-event event-${upcomingEvents.find(event => new Date(event.date).getDate() === day).type}`}>
-                          {upcomingEvents.find(event => new Date(event.date).getDate() === day).title}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+              {/* Chat Icon */}
+              <div className="demo-chat-icon">
+                <img src="/src/assets/message-icon.png" alt="Messages" className="chat-icon-image" />
               </div>
             </div>
           </section>
+
           
           <section id="testimonials" className="testimonials">
             <h2 className="text-center">What Churches Are Saying</h2>
             <div className="testimonial-grid">
-              {testimonials.map(testimonial => (
-                <div key={testimonial.id} className="testimonial-card">
-                  <p className="testimonial-text">"{testimonial.text}"</p>
-                  <p className="testimonial-author">{testimonial.author}</p>
-                  <p className="testimonial-role">{testimonial.role}</p>
-                </div>
-              ))}
+            {testimonials.map(testimonial => (
+              <div key={testimonial.id} className="testimonial-card">
+                <p className="testimonial-text">"{testimonial.text}"</p>
+                <p className="testimonial-author-role">
+                  {testimonial.author} - <span className="testimonial-role">{testimonial.role}</span>
+                </p>
+              </div>
+            ))}
             </div>
           </section>
           

@@ -1,5 +1,6 @@
+// Home.jsx
 import { useState, useEffect } from 'react';
-import './Home.css';
+import '../design/Home.css';
 
 function Home() {
   // Mock data for events
@@ -29,6 +30,9 @@ function Home() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [calendarDays, setCalendarDays] = useState([]);
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  
+  // Chat state
+  const [isChatOpen, setIsChatOpen] = useState(false);
   
   // Generate calendar days
   useEffect(() => {
@@ -149,7 +153,7 @@ function Home() {
         {/* Groups Widget - Bottom Left */}
         <div className="widget groups-widget">
           <div className="widget-header">
-            <h2>My Groups</h2>
+            <h2>Groups</h2>
             <button className="widget-action-btn">+ Join</button>
           </div>
           <div className="widget-content">
@@ -182,7 +186,7 @@ function Home() {
             {reminders.length > 0 ? (
               <ul className="reminders-list">
                 {reminders.map(reminder => (
-                  <li key={reminder.id} className="reminder-item priority-${reminder.priority}">
+                  <li key={reminder.id} className={`reminder-item priority-${reminder.priority}`}>
                     <input type="checkbox" id={`reminder-${reminder.id}`} />
                     <div className="reminder-details">
                       <label htmlFor={`reminder-${reminder.id}`}>{reminder.text}</label>
@@ -198,6 +202,42 @@ function Home() {
           </div>
         </div>
       </div>
+      
+      {/* Chat Icon */}
+      <div className="chat-icon" onClick={() => setIsChatOpen(!isChatOpen)}>
+  <img src="/src/assets/message-icon.png" alt="Messages" className="chat-icon-image" />
+</div>
+      
+      {/* Chat Popup */}
+      {isChatOpen && (
+        <div className="chat-popup">
+          <div className="chat-header">
+            <h3>Messages</h3>
+            <button onClick={() => setIsChatOpen(false)}>×</button>
+          </div>
+          <div className="chat-content">
+            <div className="chat-list">
+              {/* Chat conversations would go here */}
+              <div className="chat-conversation">
+                <div className="chat-avatar">P</div>
+                <div className="chat-preview">
+                  <h4>Pastor Mike</h4>
+                  <p>Looking forward to seeing you Sunday!</p>
+                </div>
+                <div className="chat-time">2h</div>
+              </div>
+              <div className="chat-conversation">
+                <div className="chat-avatar">Y</div>
+                <div className="chat-preview">
+                  <h4>Youth Group</h4>
+                  <p>Don't forget to bring snacks tomorrow</p>
+                </div>
+                <div className="chat-time">5h</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,9 +1,10 @@
+/* index.css */
 :root {
   --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   --transition: all 0.3s ease;
   --widget-bg: #2a3847;
   --widget-header: #243141;
-  --teal: #4ecdc4;
+  --teal: #72d9f1;
   --primary: #0588A6;
   --primary-light: #8b9dc3;
   --primary-dark: #2a4173;
@@ -31,6 +32,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 
 * {
   box-sizing: border-box;
@@ -69,14 +71,14 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: var(--primary);
+  background-color: var(--primary-dark);
   color: var(--text-light);
   cursor: pointer;
   transition: all 0.25s;
 }
 
 button:hover {
-  background-color: var(--primary-dark);
+  background-color: var(--primary-light);
 }
 
 button:focus,

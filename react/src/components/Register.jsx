@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './LR.css';
+import '../design/LR.css';
 
 function Register({ onClose, onSwitchToLogin, onRegister }) {
   const [formData, setFormData] = useState({
