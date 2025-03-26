@@ -1,5 +1,5 @@
-//App.jsx
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import './design/App.css'
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
@@ -41,12 +41,13 @@ function App() {
     largeText: false
   });
   
-  // Add state for auth modals and user authentication
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userData, setUserData] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -66,7 +67,6 @@ function App() {
     });
   };
   
-  // Auth modal handlers
   const openLogin = () => {
     setShowLogin(true);
     setShowRegister(false);
@@ -92,30 +92,26 @@ function App() {
     setShowLogin(true);
   };
   
-  // Authentication handlers
   const handleLogin = (userData) => {
     setUserData(userData);
     setIsAuthenticated(true);
     closeAuthModals();
+    navigate('/home');
   };
   
   const handleRegister = (userData) => {
     setUserData(userData);
     setIsAuthenticated(true);
     closeAuthModals();
+    navigate('/home');
   };
   
   const handleLogout = () => {
     setUserData(null);
     setIsAuthenticated(false);
+    navigate('/');
   };
 
-  // If user is authenticated, show the main dashboard
-  if (isAuthenticated) {
-    return <Home userData={userData} onLogout={handleLogout} />;
-  }
-  
-  // Otherwise show the landing page with login/register functionality
   return (
     <div className={`${accessibilityMode.highContrast ? 'high-contrast' : ''} ${accessibilityMode.largeText ? 'large-text' : ''}`}>
       <header>
@@ -125,32 +121,22 @@ function App() {
           </div>
           
           <nav className="nav-links">
-            <a href="#features">Features</a>
-            <a href="#demo">Demo</a>
-            <a href="#testimonials">Testimonials</a>
-            <a href="#contact">Contact</a>
+            <Link to="/">Home</Link>
+            <Link to="/features">Features</Link>
+            <Link to="/demo">Demo</Link>
+            <Link to="/testimonials">Testimonials</Link>
+            <Link to="/contact">Contact</Link>
           </nav>
           
           <div className="auth-controls">
-            <button className="login-btn" onClick={openLogin}>Log In</button>
-            <button className="signup-btn" onClick={openRegister}>Sign Up</button>
-          </div>
-          
-          <div className="accessibility-controls">
-            {/* <button 
-              onClick={toggleHighContrast}
-              aria-label="Toggle high contrast mode"
-              title="Toggle high contrast mode"
-            >
-              {accessibilityMode.highContrast ? 'Standard Contrast' : 'High Contrast'}
-            </button>
-            <button 
-              onClick={toggleLargeText}
-              aria-label="Toggle large text mode"
-              title="Toggle large text mode"
-            >
-              {accessibilityMode.largeText ? 'Standard Text' : 'Large Text'}
-            </button> */}
+            {isAuthenticated ? (
+              <button className="logout-btn" onClick={handleLogout}>Log Out</button>
+            ) : (
+              <>
+                <button className="login-btn" onClick={openLogin}>Log In</button>
+                <button className="signup-btn" onClick={openRegister}>Sign Up</button>
+              </>
+            )}
           </div>
           
           <button className="mobile-menu-button" onClick={toggleMenu} aria-label="Toggle menu">
@@ -159,309 +145,51 @@ function App() {
         </div>
       </header>
 
-      {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="mobile-menu-overlay">
           <div className="mobile-menu">
             <button className="mobile-menu-close" onClick={toggleMenu}>×</button>
             <nav className="mobile-nav-links">
-              <a href="#features" onClick={toggleMenu}>Features</a>
-              <a href="#demo" onClick={toggleMenu}>Demo</a>
-              <a href="#testimonials" onClick={toggleMenu}>Testimonials</a>
-              <a href="#contact" onClick={toggleMenu}>Contact</a>
+              <Link to="/" onClick={toggleMenu}>Home</Link>
+              <Link to="/features" onClick={toggleMenu}>Features</Link>
+              <Link to="/demo" onClick={toggleMenu}>Demo</Link>
+              <Link to="/testimonials" onClick={toggleMenu}>Testimonials</Link>
+              <Link to="/contact" onClick={toggleMenu}>Contact</Link>
             </nav>
             <div className="mobile-auth-controls">
-              <button className="login-btn" onClick={() => {toggleMenu(); openLogin();}}>Log In</button>
-              <button className="signup-btn" onClick={() => {toggleMenu(); openRegister();}}>Sign Up</button>
+              {isAuthenticated ? (
+                <button className="logout-btn" onClick={() => {toggleMenu(); handleLogout();}}>Log Out</button>
+              ) : (
+                <>
+                  <button className="login-btn" onClick={() => {toggleMenu(); openLogin();}}>Log In</button>
+                  <button className="signup-btn" onClick={() => {toggleMenu(); openRegister();}}>Sign Up</button>
+                </>
+              )}
             </div>
           </div>
         </div>
       )}
       
-      {/* Auth Modals */}
       {showLogin && <Login onClose={closeAuthModals} onSwitchToRegister={switchToRegister} onLogin={handleLogin} />}
       {showRegister && <Register onClose={closeAuthModals} onSwitchToLogin={switchToLogin} onRegister={handleRegister} />}
       
-      <main>
-        <section className="hero">
-          <div className="app-container">
-            <h2>Connecting Generations Through Better Communication</h2>
-            <p>
-              Our platform bridges the gap between youth, parents, and seniors in your congregation
-              with personalized messaging, unified calendars, and age-appropriate interfaces.
-            </p>
-            <div className="hero-buttons">
-              <button className="btn-large">Request Demo</button>
-              <button className="btn-large btn-secondary">Learn More</button>
-            </div>
-          </div>
-        </section>
-        
-        <div className="app-container">
-          <section id="features" className="features-section">
-            <h2 className="text-center">Designed for Every Generation</h2>
-            <div className="features">
-              <div className="feature-card youth">
-                <div className="feature-icon">📱</div>
-                <h3>Youth Engagement</h3>
-                <p>
-                  Concise text reminders, emoji-rich content, and direct response options 
-                  keep youth connected and engaged with church activities.
-                </p>
-              </div>
-              
-              <div className="feature-card parent">
-                <div className="feature-icon">👪</div>
-                <h3>Parent Dashboard</h3>
-                <p>
-                  Comprehensive family view with appropriate oversight of children's activities,
-                  assignments and event details all in one place.
-                </p>
-              </div>
-              
-              <div className="feature-card senior">
-                <div className="feature-icon">👵</div>
-                <h3>Senior-Friendly Interface</h3>
-                <p>
-                  Large text options, voice-to-text capabilities, and simplified navigation
-                  ensure seniors stay connected without technology barriers.
-                </p>
-              </div>
-            </div>
-            
-            <div className="features">
-              <div className="feature-card youth">
-                <div className="feature-icon">📆</div>
-                <h3>Unified Calendar</h3>
-                <p>
-                  A comprehensive church calendar with age-appropriate views and
-                  color-coding for different ministries and age groups.
-                </p>
-              </div>
-              
-              <div className="feature-card parent">
-                <div className="feature-icon">💬</div>
-                <h3>Smart SMS System</h3>
-                <p>
-                  Customized text message reminders with intelligent timing
-                  parameters tailored to event type and demographic.
-                </p>
-              </div>
-              
-              <div className="feature-card senior">
-                <div className="feature-icon">📊</div>
-                <h3>Engagement Analytics</h3>
-                <p>
-                  Actionable insights into communication effectiveness across
-                  demographic groups to refine your outreach strategy.
-                </p>
-              </div>
-            </div>
-          </section>
-          
-          <section id="demo" className="demo-section">
-            <h2 className="text-center section-title">Experience Our Dashboard</h2>
-            <div className="demo-dashboard">
-              {/* Events Widget */}
-              <div className="demo-widget events-widget">
-                <div className="widget-header">
-                  <h3>Upcoming Events</h3>
-                  <button className="widget-action-btn">+ Add</button>
-                </div>
-                <div className="widget-content">
-                  <ul className="events-list">
-                    <li className="event-item">
-                      <div className="event-date">
-                        <span className="event-day">26</span>
-                        <span className="event-month">Mar</span>
-                      </div>
-                      <div className="event-details">
-                        <h3>Youth Bible Study</h3>
-                        <p>6:00 PM • Youth Room</p>
-                      </div>
-                    </li>
-                    <li className="event-item">
-                      <div className="event-date">
-                        <span className="event-day">28</span>
-                        <span className="event-month">Mar</span>
-                      </div>
-                      <div className="event-details">
-                        <h3>Parent Committee</h3>
-                        <p>7:00 PM • Fellowship Hall</p>
-                      </div>
-                    </li>
-                    <li className="event-item">
-                      <div className="event-date">
-                        <span className="event-day">30</span>
-                        <span className="event-month">Mar</span>
-                      </div>
-                      <div className="event-details">
-                        <h3>Sunday Service</h3>
-                        <p>10:00 AM • Main Sanctuary</p>
-                      </div>
-                    </li>
-                  </ul>
-                  <button className="view-all-btn">View All Events</button>
-                </div>
-              </div>
-
-              {/* Calendar Widget */}
-              <div className="demo-widget calendar-widget">
-                <div className="widget-header">
-                  <h3>Calendar</h3>
-                  <div className="calendar-navigation">
-                    <button>◀</button>
-                    <h3>March 2025</h3>
-                    <button>▶</button>
-                  </div>
-                </div>
-                <div className="widget-content">
-                  <div className="calendar-grid">
-                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                      <div key={day} className="calendar-day-header">{day}</div>
-                    ))}
-                    
-                    {Array.from({ length: 31 }, (_, i) => {
-                      const day = i + 1;
-                      const hasEvent = [26, 28, 30].includes(day);
-                      return (
-                        <div key={day} className={`calendar-day ${hasEvent ? 'has-event' : ''}`}>
-                          {day}
-                          {hasEvent && <div className="event-indicator"></div>}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              {/* Groups Widget */}
-              <div className="demo-widget groups-widget">
-                <div className="widget-header">
-                  <h3>Groups</h3>
-                  <button className="widget-action-btn">+ Join</button>
-                </div>
-                <div className="widget-content">
-                  <ul className="groups-list">
-                    <li className="group-item">
-                      <div className="group-icon">Y</div>
-                      <div className="group-details">
-                        <h3>Youth Ministry</h3>
-                        <p>24 members • <span className="role-badge">Member</span></p>
-                      </div>
-                    </li>
-                    <li className="group-item">
-                      <div className="group-icon">W</div>
-                      <div className="group-details">
-                        <h3>Worship Team</h3>
-                        <p>12 members • <span className="role-badge">Leader</span></p>
-                      </div>
-                    </li>
-                    <li className="group-item">
-                      <div className="group-icon">B</div>
-                      <div className="group-details">
-                        <h3>Bible Study</h3>
-                        <p>18 members • <span className="role-badge">Member</span></p>
-                      </div>
-                    </li>
-                  </ul>
-                  <button className="view-all-btn">View All Groups</button>
-                </div>
-              </div>
-
-              {/* Reminders Widget */}
-              <div className="demo-widget reminders-widget">
-                <div className="widget-header">
-                  <h3>Reminders</h3>
-                  <button className="widget-action-btn">+ Add</button>
-                </div>
-                <div className="widget-content">
-                  <ul className="reminders-list">
-                    <li className="reminder-item priority-high">
-                      <input type="checkbox" id="reminder-1" />
-                      <div className="reminder-details">
-                        <label htmlFor="reminder-1">Prepare worship slides</label>
-                        <p>Due: March 26, 2025</p>
-                      </div>
-                    </li>
-                    <li className="reminder-item priority-medium">
-                      <input type="checkbox" id="reminder-2" />
-                      <div className="reminder-details">
-                        <label htmlFor="reminder-2">Bring snacks for youth group</label>
-                        <p>Due: March 26, 2025</p>
-                      </div>
-                    </li>
-                    <li className="reminder-item priority-medium">
-                      <input type="checkbox" id="reminder-3" />
-                      <div className="reminder-details">
-                        <label htmlFor="reminder-3">Call new members</label>
-                        <p>Due: March 29, 2025</p>
-                      </div>
-                    </li>
-                  </ul>
-                  <button className="view-all-btn">View All Reminders</button>
-                </div>
-              </div>
-              
-              {/* Chat Icon */}
-              <div className="demo-chat-icon">
-                <img src="/src/assets/message-icon.png" alt="Messages" className="chat-icon-image" />
-              </div>
-            </div>
-          </section>
-
-          
-          <section id="testimonials" className="testimonials">
-            <h2 className="text-center">What Churches Are Saying</h2>
-            <div className="testimonial-grid">
-            {testimonials.map(testimonial => (
-              <div key={testimonial.id} className="testimonial-card">
-                <p className="testimonial-text">"{testimonial.text}"</p>
-                <p className="testimonial-author-role">
-                  {testimonial.author} - <span className="testimonial-role">{testimonial.role}</span>
-                </p>
-              </div>
-            ))}
-            </div>
-          </section>
-          
-          <section className="cta-section">
-            <h2>Ready to Connect Your Congregation?</h2>
-            <p>
-              Join hundreds of churches that have improved attendance, engagement, and community
-              through our cross-generational communication platform.
-            </p>
-            <button className="btn-large btn-secondary">Schedule a Free Demo</button>
-          </section>
-          
-          <section id="contact" className="contact-section">
-            <h2>Have Questions?</h2>
-            <form className="contact-form">
-              <div className="form-group">
-                <label htmlFor="name">Name</label>
-                <input type="text" id="name" name="name" required />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <input type="email" id="email" name="email" required />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="church">Church Name</label>
-                <input type="text" id="church" name="church" />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="message">Message</label>
-                <textarea id="message" name="message" rows="5" required></textarea>
-              </div>
-              
-              <button type="submit" className="send-message-btn">Send Message</button>
-            </form>
-          </section>
-        </div>
-      </main>
+      <Routes>
+        <Route path="/" element={
+          isAuthenticated ? (
+            <Home userData={userData} />
+          ) : (
+            <LandingPage 
+              upcomingEvents={upcomingEvents}
+              testimonials={testimonials}
+            />
+          )
+        } />
+        <Route path="/features" element={<Features />} />
+        <Route path="/demo" element={<Demo />} />
+        <Route path="/testimonials" element={<Testimonials testimonials={testimonials} />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/home" element={<Home userData={userData} />} />
+      </Routes>
       
       <footer>
         <div className="app-container">
@@ -474,10 +202,10 @@ function App() {
             <div className="footer-column">
               <h3>Features</h3>
               <div className="footer-links">
-                <a href="#features">Smart Messaging</a>
-                <a href="#features">Unified Calendar</a>
-                <a href="#features">Parent Dashboard</a>
-                <a href="#features">Accessibility Tools</a>
+                <Link to="/features#smart-messaging">Smart Messaging</Link>
+                <Link to="/features#unified-calendar">Unified Calendar</Link>
+                <Link to="/features#parent-dashboard">Parent Dashboard</Link>
+                <Link to="/features#accessibility-tools">Accessibility Tools</Link>
               </div>
             </div>
             
@@ -506,6 +234,234 @@ function App() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function LandingPage({ upcomingEvents, testimonials }) {
+  return (
+    <main>
+      <section className="hero">
+        <div className="app-container">
+          <h2>Connecting Generations Through Better Communication</h2>
+          <p>
+            Our platform bridges the gap between youth, parents, and seniors in your congregation
+            with personalized messaging, unified calendars, and age-appropriate interfaces.
+          </p>
+          <div className="hero-buttons">
+            <button className="btn-large">Request Demo</button>
+            <button className="btn-large btn-secondary">Learn More</button>
+          </div>
+        </div>
+      </section>
+      
+      <section id="features" className="features-section">
+        <div className="app-container">
+          <h2 className="text-center">Designed for Every Generation</h2>
+          <div className="features">
+            <div className="feature-card youth">
+              <div className="feature-icon">📱</div>
+              <h3>Youth Engagement</h3>
+              <p>
+                Concise text reminders, emoji-rich content, and direct response options 
+                keep youth connected and engaged with church activities.
+              </p>
+            </div>
+            
+            <div className="feature-card parent">
+              <div className="feature-icon">👪</div>
+              <h3>Parent Dashboard</h3>
+              <p>
+                Comprehensive family view with appropriate oversight of children's activities,
+                assignments and event details all in one place.
+              </p>
+            </div>
+            
+            <div className="feature-card senior">
+              <div className="feature-icon">👵</div>
+              <h3>Senior-Friendly Interface</h3>
+              <p>
+                Large text options, voice-to-text capabilities, and simplified navigation
+                ensure seniors stay connected without technology barriers.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section id="demo" className="demo-section">
+        <div className="app-container">
+          <h2 className="text-center section-title">Experience Our Dashboard</h2>
+          <div className="demo-dashboard">
+            <div className="demo-widget events-widget">
+              <div className="widget-header">
+                <h3>Upcoming Events</h3>
+                <button className="widget-action-btn">+ Add</button>
+              </div>
+              <div className="widget-content">
+                <ul className="events-list">
+                  {upcomingEvents.slice(0, 3).map(event => (
+                    <li key={event.id} className="event-item">
+                      <div className="event-date">
+                        <span className="event-day">{new Date(event.date).getDate()}</span>
+                        <span className="event-month">{new Date(event.date).toLocaleString('default', { month: 'short' })}</span>
+                      </div>
+                      <div className="event-details">
+                        <h3>{event.title}</h3>
+                        <p>{new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                <button className="view-all-btn">View All Events</button>
+              </div>
+            </div>
+
+            <div className="demo-widget calendar-widget">
+              <div className="widget-header">
+                <h3>Calendar</h3>
+                <div className="calendar-navigation">
+                  <button>◀</button>
+                  <h3>March 2025</h3>
+                  <button>▶</button>
+                </div>
+              </div>
+              <div className="widget-content">
+                <div className="calendar-grid">
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                    <div key={day} className="calendar-day-header">{day}</div>
+                  ))}
+                  
+                  {Array.from({ length: 31 }, (_, i) => {
+                    const day = i + 1;
+                    const hasEvent = upcomingEvents.some(event => new Date(event.date).getDate() === day);
+                    return (
+                      <div key={day} className={`calendar-day ${hasEvent ? 'has-event' : ''}`}>
+                        {day}
+                        {hasEvent && <div className="event-indicator"></div>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="testimonials" className="testimonials">
+        <div className="app-container">
+          <h2 className="text-center">What Churches Are Saying</h2>
+          <div className="testimonial-grid">
+          {testimonials.map(testimonial => (
+            <div key={testimonial.id} className="testimonial-card">
+              <p className="testimonial-text">"{testimonial.text}"</p>
+              <p className="testimonial-author-role">
+                {testimonial.author} - <span className="testimonial-role">{testimonial.role}</span>
+              </p>
+            </div>
+          ))}
+          </div>
+        </div>
+      </section>
+      
+      <section className="cta-section">
+        <div className="app-container">
+          <h2>Ready to Connect Your Congregation?</h2>
+          <p>
+            Join hundreds of churches that have improved attendance, engagement, and community
+            through our cross-generational communication platform.
+          </p>
+          <button className="btn-large btn-secondary">Schedule a Free Demo</button>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function Features() {
+  return (
+    <section id="features" className="features-section">
+      <div className="app-container">
+        <h2 className="text-center">Our Features</h2>
+        <div className="features-grid">
+          <div id="smart-messaging" className="feature-item">
+            <h3>Smart Messaging</h3>
+            <p>Personalized communication tailored to each age group's preferences.</p>
+          </div>
+          <div id="unified-calendar" className="feature-item">
+            <h3>Unified Calendar</h3>
+            <p>A comprehensive church calendar with age-appropriate views and color-coding.</p>
+          </div>
+          <div id="parent-dashboard" className="feature-item">
+            <h3>Parent Dashboard</h3>
+            <p>Centralized hub for parents to manage their children's church activities.</p>
+          </div>
+          <div id="accessibility-tools" className="feature-item">
+            <h3>Accessibility Tools</h3>
+            <p>Features like large text and high contrast modes to accommodate all users.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Demo() {
+  return (
+    <section id="demo" className="demo-section">
+      <div className="app-container">
+        <h2 className="text-center">See Faith Connect in Action</h2>
+        <div className="demo-video">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen></iframe>
+        </div>
+        <button className="btn-large">Request a Live Demo</button>
+      </div>
+    </section>
+  );
+}
+
+function Testimonials({ testimonials }) {
+  return (
+    <section id="testimonials" className="testimonials-section">
+      <div className="app-container">
+        <h2 className="text-center">What Churches Are Saying</h2>
+        <div className="testimonial-grid">
+          {testimonials.map(testimonial => (
+            <div key={testimonial.id} className="testimonial-card">
+              <p className="testimonial-text">"{testimonial.text}"</p>
+              <p className="testimonial-author-role">
+                {testimonial.author} - <span className="testimonial-role">{testimonial.role}</span>
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Contact() {
+  return (
+    <section id="contact" className="contact-section">
+      <div className="app-container">
+        <h2 className="text-center">Get in Touch</h2>
+        <form className="contact-form">
+          <div className="form-group">
+            <label htmlFor="name">Name</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div className="form-group">
+            <label htmlFor="message">Message</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+          </div>
+          <button type="submit" className="btn-large">Send Message</button>
+        </form>
+      </div>
+    </section>
   );
 }
 
