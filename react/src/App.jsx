@@ -46,6 +46,11 @@ function App() {
   const [showRegister, setShowRegister] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   const toggleHighContrast = () => {
     setAccessibilityMode({
@@ -148,11 +153,30 @@ function App() {
             </button> */}
           </div>
           
-          <button className="mobile-menu-button" aria-label="Open menu">
+          <button className="mobile-menu-button" onClick={toggleMenu} aria-label="Toggle menu">
             ☰
           </button>
         </div>
       </header>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="mobile-menu-overlay">
+          <div className="mobile-menu">
+            <button className="mobile-menu-close" onClick={toggleMenu}>×</button>
+            <nav className="mobile-nav-links">
+              <a href="#features" onClick={toggleMenu}>Features</a>
+              <a href="#demo" onClick={toggleMenu}>Demo</a>
+              <a href="#testimonials" onClick={toggleMenu}>Testimonials</a>
+              <a href="#contact" onClick={toggleMenu}>Contact</a>
+            </nav>
+            <div className="mobile-auth-controls">
+              <button className="login-btn" onClick={() => {toggleMenu(); openLogin();}}>Log In</button>
+              <button className="signup-btn" onClick={() => {toggleMenu(); openRegister();}}>Sign Up</button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Auth Modals */}
       {showLogin && <Login onClose={closeAuthModals} onSwitchToRegister={switchToRegister} onLogin={handleLogin} />}
@@ -206,7 +230,7 @@ function App() {
             </div>
             
             <div className="features">
-              <div className="feature-card">
+              <div className="feature-card youth">
                 <div className="feature-icon">📆</div>
                 <h3>Unified Calendar</h3>
                 <p>
@@ -215,7 +239,7 @@ function App() {
                 </p>
               </div>
               
-              <div className="feature-card">
+              <div className="feature-card parent">
                 <div className="feature-icon">💬</div>
                 <h3>Smart SMS System</h3>
                 <p>
@@ -224,7 +248,7 @@ function App() {
                 </p>
               </div>
               
-              <div className="feature-card">
+              <div className="feature-card senior">
                 <div className="feature-icon">📊</div>
                 <h3>Engagement Analytics</h3>
                 <p>
