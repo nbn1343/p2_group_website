@@ -1,0 +1,30 @@
+{
+	"name": "p2_group_website",
+	"version": "1.0.0",
+	"description": "p2 project for CS 356",
+	"main": "index.js",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/nbn1343/p2_group_website.git"
+	},
+	"keywords": [],
+	"author": "Stone L",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/nbn1343/p2_group_website/issues"
+	},
+	"homepage": "https://github.com/nbn1343/p2_group_website#readme",
+	"dependencies": {
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
+		"react-router-dom": "^7.4.0"
+	},
+	"devDependencies": {
+		"vite": "^6.2.2"
+	}
+}
