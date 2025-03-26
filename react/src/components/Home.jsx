@@ -22,14 +22,17 @@ function Home() {
   const [reminders, setReminders] = useState([
     { id: 1, text: "Prepare worship slides", dueDate: "2025-03-26", priority: "high" },
     { id: 2, text: "Bring snacks for youth group", dueDate: "2025-03-26", priority: "medium" },
-    { id: 3, text: "Call new members", dueDate: "2025-03-29", priority: "medium" },
-    { id: 4, text: "Submit budget proposal", dueDate: "2025-04-01", priority: "high" }
+    { id: 3, text: "Call new members", date: "2025-03-29", priority: "medium" },
+    { id: 4, text: "Submit budget proposal", date: "2025-04-01", priority: "high" }
   ]);
 
   // Calendar data
   const [currentDate, setCurrentDate] = useState(new Date());
   const [calendarDays, setCalendarDays] = useState([]);
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  
+  // Calendar view state
+  const [calendarView, setCalendarView] = useState('events');
   
   // Chat state
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -92,14 +95,32 @@ function Home() {
       </header>
 
       <div className="widgets-container">
-        {/* Events Widget - Top Left */}
-        <div className="widget events-widget">
+        {/* Calendar Widget - Left */}
+        <div className="widget calendar-widget">
           <div className="widget-header">
-            <h2>Upcoming Events</h2>
-            <button className="widget-action-btn">+ Add</button>
+            <h2>Calendar</h2>
+            <div className="calendar-navigation">
+                  <button onClick={prevMonth}>◀</button>
+                  <h3>{currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</h3>
+                  <button onClick={nextMonth}>▶</button>
+                </div>
+            <div className="calendar-view-toggle">
+              <button 
+                className={`view-toggle-btn ${calendarView === 'events' ? 'active' : ''}`}
+                onClick={() => setCalendarView('events')}
+              >
+                Events
+              </button>
+              <button 
+                className={`view-toggle-btn ${calendarView === 'calendar' ? 'active' : ''}`}
+                onClick={() => setCalendarView('calendar')}
+              >
+                Calendar
+              </button>
+            </div>
           </div>
           <div className="widget-content">
-            {events.length > 0 ? (
+            {calendarView === 'events' ? (
               <ul className="events-list">
                 {events.map(event => (
                   <li key={event.id} className="event-item">
@@ -115,68 +136,28 @@ function Home() {
                 ))}
               </ul>
             ) : (
-              <p className="no-data-message">No upcoming events</p>
-            )}
-            <button className="view-all-btn">View All Events</button>
-          </div>
-        </div>
-
-        {/* Calendar Widget - Top Right */}
-        <div className="widget calendar-widget">
-          <div className="widget-header">
-            <h2>Calendar</h2>
-            <div className="calendar-navigation">
-              <button onClick={prevMonth}>◀</button>
-              <h3>{currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</h3>
-              <button onClick={nextMonth}>▶</button>
-            </div>
-          </div>
-          <div className="widget-content">
-            <div className="calendar-grid">
-              {weekdays.map(day => (
-                <div key={day} className="calendar-day-header">{day}</div>
-              ))}
-              
-              {calendarDays.map((day, index) => (
-                <div 
-                  key={index} 
-                  className={`calendar-day ${day.empty ? 'empty' : ''} ${day.hasEvent ? 'has-event' : ''}`}
-                >
-                  {day.day}
-                  {day.hasEvent && <div className="event-indicator"></div>}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Groups Widget - Bottom Left */}
-        <div className="widget groups-widget">
-          <div className="widget-header">
-            <h2>Groups</h2>
-            <button className="widget-action-btn">+ Join</button>
-          </div>
-          <div className="widget-content">
-            {groups.length > 0 ? (
-              <ul className="groups-list">
-                {groups.map(group => (
-                  <li key={group.id} className="group-item">
-                    <div className="group-icon">{group.name.charAt(0)}</div>
-                    <div className="group-details">
-                      <h3>{group.name}</h3>
-                      <p>{group.members} members • <span className="role-badge">{group.role}</span></p>
+              <>
+                
+                <div className="calendar-grid">
+                  {weekdays.map(day => (
+                    <div key={day} className="calendar-day-header">{day}</div>
+                  ))}
+                  {calendarDays.map((day, index) => (
+                    <div 
+                      key={index} 
+                      className={`calendar-day ${day.empty ? 'empty' : ''} ${day.hasEvent ? 'has-event' : ''}`}
+                    >
+                      {day.day}
+                      {day.hasEvent && <div className="event-indicator"></div>}
                     </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="no-data-message">You haven't joined any groups yet</p>
+                  ))}
+                </div>
+              </>
             )}
-            <button className="view-all-btn">View All Groups</button>
           </div>
         </div>
 
-        {/* Reminders Widget - Bottom Right */}
+        {/* Reminders Widget - Top Right */}
         <div className="widget reminders-widget">
           <div className="widget-header">
             <h2>Reminders</h2>
@@ -201,12 +182,38 @@ function Home() {
             <button className="view-all-btn">View All Reminders</button>
           </div>
         </div>
+
+        {/* Groups Widget - Bottom Right */}
+        <div className="widget groups-widget">
+          <div className="widget-header">
+            <h2>Groups</h2>
+            <button className="widget-action-btn">+ Join</button>
+          </div>
+          <div className="widget-content">
+            {groups.length > 0 ? (
+              <ul className="groups-list">
+                {groups.map(group => (
+                  <li key={group.id} className="group-item">
+                    <div className="group-icon">{group.name.charAt(0)}</div>
+                    <div className="group-details">
+                      <h3>{group.name}</h3>
+                      <p>{group.members} members • <span className="role-badge">{group.role}</span></p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="no-data-message">You haven't joined any groups yet</p>
+            )}
+            <button className="view-all-btn">View All Groups</button>
+          </div>
+        </div>
       </div>
       
       {/* Chat Icon */}
       <div className="chat-icon" onClick={() => setIsChatOpen(!isChatOpen)}>
-  <img src="/src/assets/message-icon.png" alt="Messages" className="chat-icon-image" />
-</div>
+        <img src="/src/assets/message-icon.png" alt="Messages" className="chat-icon-image" />
+      </div>
       
       {/* Chat Popup */}
       {isChatOpen && (
@@ -217,7 +224,6 @@ function Home() {
           </div>
           <div className="chat-content">
             <div className="chat-list">
-              {/* Chat conversations would go here */}
               <div className="chat-conversation">
                 <div className="chat-avatar">P</div>
                 <div className="chat-preview">
