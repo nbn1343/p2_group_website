@@ -142,16 +142,6 @@ function Home() {
 
 	return (
 		<div className="main-dashboard">
-			<header className="dashboard-header">
-				<div className="logo">
-					<img src="/src/assets/Logo.png" alt="Faith Connect Logo" />
-					<h1>Faith Connect</h1>
-				</div>
-				<div className="user-controls">
-					<span className="username">Welcome, {firstName}</span>
-					<button className="logout-btn">Log Out</button>
-				</div>
-			</header>
 
 			<div className="widgets-container">
 				{/* Calendar Widget - Left */}
