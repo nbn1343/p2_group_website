@@ -1,7 +1,6 @@
 import { useState } from "react";
 import "../design/LR.css";
 import { supabase } from "../utils/supabase.js";
-// import Home from "./Home.jsx";
 
 function Login({ onClose, onSwitchToRegister, onLogin }) {
 	const [formData, setFormData] = useState({
