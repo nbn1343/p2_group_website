@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import "../design/Home.css";
 import { supabase } from "../utils/supabase";
 
-function Home() {
+function Home({userData, onLogout}) {
 	// Mock data for events
 	const [events, setEvents] = useState([
 		{
@@ -149,7 +149,7 @@ function Home() {
 				</div>
 				<div className="user-controls">
 					<span className="username">Welcome, {firstName}</span>
-					<button className="logout-btn">Log Out</button>
+					<button className="logout-btn" onClick={onLogout}>Log Out</button>
 				</div>
 			</header>
 
