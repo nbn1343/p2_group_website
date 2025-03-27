@@ -1,4 +1,3 @@
-//App.jsx
 import { useState } from "react";
 import "./design/App.css";
 import Login from "./components/Login.jsx";
@@ -241,10 +240,10 @@ function App() {
 			<main>
 				<section className="hero">
 					<div className="app-container">
-						<h2>Connecting Generations Through Better Communication</h2>
+						<h2>Unite in Every Message</h2>
 						<p>
-							Our platform bridges the gap between youth, parents, and seniors
-							in your congregation with personalized messaging, unified
+							Bridging the gap between youth, parents, and seniors
+							in your congregation with personalized messaging via SMS, unified
 							calendars, and age-appropriate interfaces.
 						</p>
 						<div className="hero-buttons">

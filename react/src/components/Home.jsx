@@ -1,9 +1,11 @@
 // Home.jsx
 import { useState, useEffect } from "react";
 import "../design/Home.css";
-import { supabase } from "../utils/supabase";
 
-function Home({userData, onLogout}) {
+function Home({ userData, onLogout }) {
+	// Use the userData prop to set the first name directly
+	const firstName = userData?.user_metadata?.first_name || "User";
+
 	// Mock data for events
 	const [events, setEvents] = useState([
 		{
@@ -65,14 +67,11 @@ function Home({userData, onLogout}) {
 	const [calendarDays, setCalendarDays] = useState([]);
 	const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-	// Calendar view state
-	const [calendarView, setCalendarView] = useState("events");
+	// Calendar view state – default to "calendar"
+	const [calendarView, setCalendarView] = useState("calendar");
 
 	// Chat state
 	const [isChatOpen, setIsChatOpen] = useState(false);
-
-	// User's first name
-	const [firstName, setFirstName] = useState("");
 
 	// Generate calendar days
 	useEffect(() => {
@@ -87,30 +86,12 @@ function Home({userData, onLogout}) {
 
 		const days = [];
 
-		// Retrieve the user's firstname to display
-		const fetchUserData = async () => {
-			// Get the authenticated user
-			const { data, error } = await supabase.auth.getUser();
-
-			if (error) {
-				console.error("Error fetching user profile:", error.message);
-				return;
-			}
-
-			if (data?.user) {
-				// Get the first name from user_metadata
-				setFirstName(data.user.user_metadata.first_name || "User");
-			}
-		};
-
-		fetchUserData();
-
 		// Add empty cells for days before the first day of the month
 		for (let i = 0; i < firstDayIndex; i++) {
 			days.push({ day: "", empty: true });
 		}
 
-		// Add days of the month
+		// Add days of the month with event check
 		for (let i = 1; i <= daysInMonth; i++) {
 			const date = new Date(year, month, i);
 			const dateString = date.toISOString().split("T")[0];
@@ -126,6 +107,15 @@ function Home({userData, onLogout}) {
 
 		setCalendarDays(days);
 	}, [currentDate, events]);
+
+	// Filter events to match the currently selected month and year
+	const filteredEvents = events.filter((event) => {
+		const eventDate = new Date(event.date);
+		return (
+			eventDate.getMonth() === currentDate.getMonth() &&
+			eventDate.getFullYear() === currentDate.getFullYear()
+		);
+	});
 
 	// Navigation for calendar
 	const prevMonth = () => {
@@ -149,7 +139,9 @@ function Home({userData, onLogout}) {
 				</div>
 				<div className="user-controls">
 					<span className="username">Welcome, {firstName}</span>
-					<button className="logout-btn" onClick={onLogout}>Log Out</button>
+					<button className="logout-btn" onClick={onLogout}>
+						Log Out
+					</button>
 				</div>
 			</header>
 
@@ -190,48 +182,50 @@ function Home({userData, onLogout}) {
 					<div className="widget-content">
 						{calendarView === "events" ? (
 							<ul className="events-list">
-								{events.map((event) => (
-									<li key={event.id} className="event-item">
-										<div className="event-date">
-											<span className="event-day">
-												{new Date(event.date).getDate()}
-											</span>
-											<span className="event-month">
-												{new Date(event.date).toLocaleString("default", {
-													month: "short",
-												})}
-											</span>
-										</div>
-										<div className="event-details">
-											<h3>{event.title}</h3>
-											<p>
-												{event.time} • {event.location}
-											</p>
-										</div>
-									</li>
-								))}
+								{filteredEvents.length > 0 ? (
+									filteredEvents.map((event) => (
+										<li key={event.id} className="event-item">
+											<div className="event-date">
+												<span className="event-day">
+													{new Date(event.date).getDate()}
+												</span>
+												<span className="event-month">
+													{new Date(event.date).toLocaleString("default", {
+														month: "short",
+													})}
+												</span>
+											</div>
+											<div className="event-details">
+												<h3>{event.title}</h3>
+												<p>
+													{event.time} • {event.location}
+												</p>
+											</div>
+										</li>
+									))
+								) : (
+									<p className="no-data-message">No events this month</p>
+								)}
 							</ul>
 						) : (
-							<>
-								<div className="calendar-grid">
-									{weekdays.map((day) => (
-										<div key={day} className="calendar-day-header">
-											{day}
-										</div>
-									))}
-									{calendarDays.map((day, index) => (
-										<div
-											key={index}
-											className={`calendar-day ${day.empty ? "empty" : ""} ${
-												day.hasEvent ? "has-event" : ""
-											}`}
-										>
-											{day.day}
-											{day.hasEvent && <div className="event-indicator"></div>}
-										</div>
-									))}
-								</div>
-							</>
+							<div className="calendar-grid">
+								{weekdays.map((day) => (
+									<div key={day} className="calendar-day-header">
+										{day}
+									</div>
+								))}
+								{calendarDays.map((day, index) => (
+									<div
+										key={index}
+										className={`calendar-day ${day.empty ? "empty" : ""} ${
+											day.hasEvent ? "has-event" : ""
+										}`}
+									>
+										{day.day}
+										{day.hasEvent && <div className="event-indicator"></div>}
+									</div>
+								))}
+							</div>
 						)}
 					</div>
 				</div>

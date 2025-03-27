@@ -42,10 +42,10 @@ function Login({ onClose, onSwitchToRegister, onLogin }) {
 			});
 			if (error) {
 				console.error("Error logging in:", error.message);
-				// Handle the error (display a message to the user, etc.)
 			} else {
+				const { data: userData } = await supabase.auth.getUser();
 				console.log("Login successful");
-				onLogin(formData);
+				onLogin(userData.user);
 			}
 		}
 	};
