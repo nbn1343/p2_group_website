@@ -714,3 +714,8 @@
 .reminder-item button:hover {
 	background: #c0392b;
 }
+
+.completed-section {
+	margin-top: 1rem;
+	padding: 0.5rem; /* adds space so the button isn't clipped */
+}
