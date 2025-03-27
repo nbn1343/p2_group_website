@@ -41,7 +41,7 @@ function App() {
 		largeText: false,
 	});
 
-  const navigate = useNavigate(); // Initialize navigation
+	const navigate = useNavigate(); // Initialize navigation
 
 	// Add state for auth modals and user authentication
 	const [showLogin, setShowLogin] = useState(false);
@@ -107,12 +107,11 @@ function App() {
 		closeAuthModals();
 	};
 
-
 	const handleLogout = () => {
 		setUserData(null);
 		setIsAuthenticated(false);
-    console.log("Log out successful.")
-    navigate("/"); // Navigate to the landing page after logout
+		console.log("Log out successful.");
+		navigate("/"); // Navigate to the landing page after logout
 	};
 
 	// If user is authenticated, show the main dashboard
@@ -242,8 +241,8 @@ function App() {
 					<div className="app-container">
 						<h2>Unite in Every Message</h2>
 						<p>
-							Bridging the gap between youth, parents, and seniors
-							in your congregation with personalized messaging via SMS, unified
+							Bridging the gap between youth, parents, and seniors in your
+							congregation with personalized messaging via SMS, unified
 							calendars, and age-appropriate interfaces.
 						</p>
 						<div className="hero-buttons">

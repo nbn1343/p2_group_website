@@ -1,10 +1,14 @@
 // Home.jsx
 import { useState, useEffect } from "react";
 import "../design/Home.css";
+import Reminders from "./Reminders";
 
 function Home({ userData, onLogout }) {
 	// Use the userData prop to set the first name directly
 	const firstName = userData?.user_metadata?.first_name || "User";
+
+	// Reminder
+	const [showAddReminderForm, setShowAddReminderForm] = useState(false);
 
 	// Mock data for events
 	const [events, setEvents] = useState([
@@ -37,29 +41,6 @@ function Home({ userData, onLogout }) {
 		{ id: 2, name: "Worship Team", members: 12, role: "Leader" },
 		{ id: 3, name: "Bible Study", members: 18, role: "Member" },
 		{ id: 4, name: "Outreach Committee", members: 8, role: "Member" },
-	]);
-
-	// Mock data for reminders
-	const [reminders, setReminders] = useState([
-		{
-			id: 1,
-			text: "Prepare worship slides",
-			dueDate: "2025-03-26",
-			priority: "high",
-		},
-		{
-			id: 2,
-			text: "Bring snacks for youth group",
-			dueDate: "2025-03-26",
-			priority: "medium",
-		},
-		{ id: 3, text: "Call new members", date: "2025-03-29", priority: "medium" },
-		{
-			id: 4,
-			text: "Submit budget proposal",
-			date: "2025-04-01",
-			priority: "high",
-		},
 	]);
 
 	// Calendar data
@@ -230,36 +211,22 @@ function Home({ userData, onLogout }) {
 					</div>
 				</div>
 
-				{/* Reminders Widget - Top Right */}
 				<div className="widget reminders-widget">
 					<div className="widget-header">
 						<h2>Reminders</h2>
-						<button className="widget-action-btn">+ Add</button>
+						<button
+							className="widget-action-btn"
+							onClick={() => setShowAddReminderForm(true)}
+						>
+							+ Add
+						</button>
 					</div>
 					<div className="widget-content">
-						{reminders.length > 0 ? (
-							<ul className="reminders-list">
-								{reminders.map((reminder) => (
-									<li
-										key={reminder.id}
-										className={`reminder-item priority-${reminder.priority}`}
-									>
-										<input type="checkbox" id={`reminder-${reminder.id}`} />
-										<div className="reminder-details">
-											<label htmlFor={`reminder-${reminder.id}`}>
-												{reminder.text}
-											</label>
-											<p>
-												Due: {new Date(reminder.dueDate).toLocaleDateString()}
-											</p>
-										</div>
-									</li>
-								))}
-							</ul>
-						) : (
-							<p className="no-data-message">No reminders</p>
-						)}
-						<button className="view-all-btn">View All Reminders</button>
+						<Reminders
+							userData={userData}
+							showAddForm={showAddReminderForm}
+							onCloseAddReminder={() => setShowAddReminderForm(false)}
+						/>
 					</div>
 				</div>
 
