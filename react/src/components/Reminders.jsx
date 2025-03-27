@@ -157,7 +157,7 @@ function Reminders({ showAddForm, onCloseAddReminder, userData }) {
 
 			{/* ───── Incomplete Reminders ───── */}
 			{incompleteReminders.length === 0 ? (
-				<p className="no-data-message">No incomplete reminders</p>
+				<p className="no-data-message">Add a reminder</p>
 			) : (
 				<ul className="reminders-list">
 					{incompleteReminders.map((reminder) => (
