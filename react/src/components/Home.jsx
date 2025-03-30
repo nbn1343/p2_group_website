@@ -86,7 +86,6 @@ function Home({ userData, onLogout }) {
 			<header className="dashboard-header">
 				<div className="logo">
 					<img src="/src/assets/Logo.png" alt="Faith Connect Logo" />
-					<h1>Faith Connect</h1>
 				</div>
 				<div className="user-controls">
 					<span className="username">Welcome, {firstName}</span>

@@ -8,7 +8,6 @@
 header {
   padding: 2rem 0;
   border-bottom: 1px solid var(--primary-light);
-  /* background-color: #FFFFFF; */
 }
 
 .header-content {
@@ -26,10 +25,10 @@ header {
 }
 
 .logo img {
-  width: 300px; /* Increase from current size */
+  width: 200px; /* Increase from current size */
   height: auto;
   max-height: 60px; /* Ensures it doesn't get too tall */
-  object-fit: contain; /* Maintains aspect ratio */
+  /* object-fit: contain; Maintains aspect ratio */
 }
 
 
