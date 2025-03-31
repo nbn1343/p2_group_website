@@ -5,6 +5,25 @@ import Calendar from "../modal/Calendar";
 import GroupModal from "../modal/GroupModal";
 import ChatModal from "../modal/ChatModal";
 
+function ProfileEdit({ userData, onSave }) {
+    const [name, setName] = useState(userData.user_metadata?.first_name || '');
+    const [email, setEmail] = useState(userData.user_metadata?.email || '');
+
+    return (
+        <div className="profile-edit">
+            <label>
+                Name:
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            </label>
+            <label>
+                Email:
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </label>
+            <button onClick={() => onSave(name, email)}>Save</button>
+        </div>
+    );
+}
+
 function Home({ userData, onLogout }) {
 	// Use the userData prop to set the first name directly
 	const firstName = userData?.user_metadata?.first_name || "User";
@@ -81,18 +100,85 @@ function Home({ userData, onLogout }) {
 		setIsChatOpen(true);
 	};
 
+	const [editProfile, setEditProfile] = useState(false);
+    const [name, setName] = useState(userData.user_metadata?.first_name || '');
+    const [email, setEmail] = useState(userData.user_metadata?.email || '');
+    const [phone, setPhone] = useState(userData.user_metadata?.phone || '');
+    const [role, setRole] = useState(userData.user_metadata?.role || '');
+    const [profileImage, setProfileImage] = useState(null);
+
+    const handleImageChange = (event) => {
+        if (event.target.files && event.target.files[0]) {
+            setProfileImage(URL.createObjectURL(event.target.files[0]));
+        }
+    };
+
+    if (editProfile) {
+        return (
+            <div className="profile-edit">
+                <label>
+                    Name:
+                    <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Enter your name"
+                    />
+                </label>
+                <label>
+                    Email:
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email"
+                    />
+                </label>
+                <label>
+                    Phone:
+                    <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="Enter your phone number"
+                    />
+                </label>
+                <label>
+                    Role:
+                    <input type="text" value={role} onChange={(e) => setRole(e.target.value)} />
+                </label>
+                <label>
+                    Profile Image:
+                    <input type="file" onChange={handleImageChange} />
+                    {profileImage && <img src={profileImage} alt="Profile Preview" className="profile-image-preview"/>}
+                </label>
+                <button onClick={() => {setEditProfile(false)}}>
+                    Save Changes
+                </button>
+            </div>
+        );
+    }
+
 	return (
 		<div className="main-dashboard">
-			<header className="dashboard-header">
-				<div className="logo">
-					<img src="/src/assets/Logo.png" alt="Faith Connect Logo" />
-				</div>
-				<div className="user-controls">
-					<span className="username">Welcome, {firstName}</span>
-					<button className="logout-btn" onClick={onLogout}>
-						Log Out
-					</button>
-				</div>
+		  <header className="dashboard-header">
+			<div className="logo">
+			  <img src="/src/assets/Logo.png" alt="Faith Connect Logo" />
+			</div>
+			<div className="user-controls">
+			  <span className="username">Welcome, {userData.user_metadata.first_name}</span>
+			  {userData && (
+				<img
+				  src="/src/assets/profile-icon.png"
+				  alt="Profile"
+				  className="profile-icon"
+				  onClick={() => setEditProfile(true)} // Open profile edit modal
+				/>
+			  )}
+			  <button className="logout-btn" onClick={onLogout}>
+				Log Out
+			  </button>
+			</div>
 			</header>
 
 			<div className="widgets-container">

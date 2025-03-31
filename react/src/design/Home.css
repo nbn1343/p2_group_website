@@ -1258,3 +1258,117 @@ input[type="time"] {
 		height: 70%;
 	}
 }
+
+.profile-icon:hover {
+    transform: scale(1.1); /* Slightly enlarge the icon on hover */
+}
+
+.profile-icon {
+    width: 30px; /* Adjust size as needed */
+    height: 30px; /* Adjust size as needed */
+    cursor: pointer; /* Indicates the icon is clickable */
+    transition: transform 0.3s ease; /* Smooth transform effect on hover */
+	background: none; /* Ensure there's no background color applied */
+}
+
+.profile-edit {
+    padding: 2rem;
+    background-color: var(--widget-bg);
+    color: white;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    margin: 2rem auto;
+    width: 90%;
+    max-width: 500px;
+}
+
+.profile-edit label {
+    display: block;
+    margin-bottom: 1rem;
+    color: var(--text-light);
+}
+
+.profile-edit input {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 4px;
+    border: 1px solid var(--teal);
+    background-color: transparent;
+    color: white;
+    margin-top: 0.5rem;
+}
+
+.profile-edit input:focus {
+    outline: none;
+    border-color: #39b1a3;
+}
+
+.profile-edit button {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    background-color: var(--teal);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.profile-edit button:hover {
+    background-color: #39b1a3;
+}
+
+.profile-edit input[type="file"] {
+    width: 100%;
+    padding: 0.5rem 0.8rem;
+    margin-top: 0.5rem;
+    border: 1px solid var(--teal);
+    background-color: var(--widget-bg);
+    color: var(--text-light);
+}
+
+.profile-image-preview {
+    margin-top: 1rem;
+    width: 100px; /* Adjust size as needed */
+    height: auto;
+    border-radius: 4px; /* Optional: for rounded corners */
+    display: block; /* Ensures the image does not overflow */
+}
+
+.profile-edit input[type="tel"] {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 4px;
+    border: 1px solid var(--teal);
+    background-color: transparent;
+    color: white;
+    margin-top: 0.5rem;
+}
+
+.error {
+    color: #ff6b6b; /* Red color for errors */
+    font-size: 0.8rem; /* Smaller font size for error messages */
+    margin-top: 0.5rem; /* Space between input and error message */
+}
+
+.form-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.profile-edit button {
+    flex: 1;
+    padding: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: var(--teal);
+    color: white;
+    font-weight: 500;
+}
+
+.profile-edit button:hover {
+    background-color: #39b1a3;
+}
