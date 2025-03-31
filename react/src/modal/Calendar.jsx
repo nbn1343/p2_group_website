@@ -11,15 +11,15 @@ function Calendar({ userData }) {
 	const [selectedDay, setSelectedDay] = useState(null);
 	const [validationError, setValidationError] = useState("");
 	const [supabaseError, setSupabaseError] = useState("");
-	
+
 	// Event form state
 	const [newEventTitle, setNewEventTitle] = useState("");
 	const [newEventDate, setNewEventDate] = useState("");
 	const [newEventTime, setNewEventTime] = useState("");
 	const [newEventLocation, setNewEventLocation] = useState("");
-	
+
 	const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-	
+
 	// Fetch events from Supabase
 	const fetchEvents = async () => {
 		setLoading(true);
@@ -29,7 +29,7 @@ function Calendar({ userData }) {
 			.select("*")
 			.eq("user_id", userData.id)
 			.order("date", { ascending: true });
-		
+
 		if (error) {
 			setSupabaseError(error.message);
 		} else {
@@ -37,13 +37,13 @@ function Calendar({ userData }) {
 		}
 		setLoading(false);
 	};
-	
+
 	useEffect(() => {
 		if (userData) {
 			fetchEvents();
 		}
 	}, [userData]);
-	
+
 	// Generate calendar days based on current month/year
 	useEffect(() => {
 		const year = currentDate.getFullYear();
@@ -66,7 +66,7 @@ function Calendar({ userData }) {
 		for (let i = 1; i <= daysInMonth; i++) {
 			const date = new Date(year, month, i);
 			const dateString = date.toISOString().split("T")[0];
-			
+
 			// Check if there are events on this day
 			const hasEvent = events.some((event) => {
 				const eventDate = new Date(event.date);
@@ -87,7 +87,7 @@ function Calendar({ userData }) {
 
 		setCalendarDays(days);
 	}, [currentDate, events]);
-	
+
 	// Filter events for the current month
 	const filteredEvents = events.filter((event) => {
 		const eventDate = new Date(event.date);
@@ -96,32 +96,32 @@ function Calendar({ userData }) {
 			eventDate.getFullYear() === currentDate.getFullYear()
 		);
 	});
-	
+
 	// Filter events for a specific day
 	const getDayEvents = (dateString) => {
 		return events.filter((event) => event.date === dateString);
 	};
-	
+
 	// Handle day click to show that day's events
 	const handleDayClick = (day) => {
 		if (day.empty) return;
-		
+
 		setSelectedDay(day.date);
 		setCalendarView("events");
 	};
-	
+
 	// Add a new event
 	const addEvent = async (e) => {
 		e.preventDefault();
-		
+
 		if (!newEventTitle || !newEventDate || !newEventTime || !newEventLocation) {
 			setValidationError("Please fill out all fields.");
 			return;
 		}
-		
+
 		setValidationError("");
 		setSupabaseError("");
-		
+
 		const { error } = await supabase.from("events").insert([
 			{
 				title: newEventTitle,
@@ -131,7 +131,7 @@ function Calendar({ userData }) {
 				user_id: userData.id,
 			},
 		]);
-		
+
 		if (error) {
 			setSupabaseError(error.message);
 		} else {
@@ -140,41 +140,41 @@ function Calendar({ userData }) {
 			setShowAddEventForm(false);
 		}
 	};
-	
+
 	// Update an event
 	const updateEvent = async (event, field, value) => {
 		setSupabaseError("");
-		
+
 		const updatedEvent = { ...event, [field]: value };
-		
+
 		const { error } = await supabase
 			.from("events")
 			.update(updatedEvent)
 			.eq("id", event.id);
-			
+
 		if (error) {
 			setSupabaseError(error.message);
 		} else {
 			fetchEvents();
 		}
 	};
-	
+
 	// Delete an event
 	const deleteEvent = async (id) => {
 		setSupabaseError("");
-		
+
 		const { error } = await supabase
 			.from("events")
 			.delete()
 			.eq("id", id);
-			
+
 		if (error) {
 			setSupabaseError(error.message);
 		} else {
 			fetchEvents();
 		}
 	};
-	
+
 	// Reset the event form
 	const resetEventForm = () => {
 		setNewEventTitle("");
@@ -183,7 +183,7 @@ function Calendar({ userData }) {
 		setNewEventLocation("");
 		setValidationError("");
 	};
-	
+
 	// Calendar navigation
 	const prevMonth = () => {
 		setCurrentDate(
@@ -196,21 +196,21 @@ function Calendar({ userData }) {
 			new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
 		);
 	};
-	
+
 	// Format date for display
 	const formatDate = (dateString) => {
 		const date = new Date(dateString);
 		return date.toLocaleDateString();
 	};
-	
+
 	if (loading) return <div>Loading calendar...</div>;
-	
+
 	// Calculate which events to show based on calendarView and selectedDay
 	let eventsToShow = filteredEvents;
 	if (calendarView === "events" && selectedDay) {
 		eventsToShow = getDayEvents(selectedDay);
 	}
-	
+
 	return (
 		<div>
 			{/* ───── ADD EVENT MODAL ───── */}
@@ -262,14 +262,7 @@ function Calendar({ userData }) {
 					</div>
 				</div>
 			)}
-			
-			{/* ───── SUPABASE ERROR ───── */}
-			{/* {supabaseError && (
-				<div style={{ color: "red", margin: "1rem" }}>
-					Error: {supabaseError}
-				</div>
-			)}
-			 */}
+
 			{/* ───── CALENDAR HEADER ───── */}
 			<div className="widget-header">
 				<h2>Calendar</h2>
@@ -285,17 +278,15 @@ function Calendar({ userData }) {
 				</div>
 				<div className="calendar-view-toggle">
 					<button
-						className={`view-toggle-btn ${
-							calendarView === "events" ? "active" : ""
-						}`}
+						className={`view-toggle-btn ${calendarView === "events" ? "active" : ""
+							}`}
 						onClick={() => setCalendarView("events")}
 					>
 						Events
 					</button>
 					<button
-						className={`view-toggle-btn ${
-							calendarView === "calendar" ? "active" : ""
-						}`}
+						className={`view-toggle-btn ${calendarView === "calendar" ? "active" : ""
+							}`}
 						onClick={() => {
 							setCalendarView("calendar");
 							setSelectedDay(null);
@@ -312,14 +303,14 @@ function Calendar({ userData }) {
 					</button>
 				</div>
 			</div>
-			
+
 			{/* ───── CALENDAR CONTENT ───── */}
 			<div className="widget-content">
 				{calendarView === "events" ? (
 					<div>
 						{selectedDay && (
 							<div className="selected-day-header">
-								<button 
+								<button
 									onClick={() => setSelectedDay(null)}
 									className="back-button"
 								>
@@ -343,21 +334,21 @@ function Calendar({ userData }) {
 											</span>
 										</div>
 										<div className="event-details">
-											<input 
+											<input
 												type="text"
 												className="event-title-input"
 												value={event.title}
 												onChange={(e) => updateEvent(event, "title", e.target.value)}
 											/>
 											<div className="event-meta">
-												<input 
+												<input
 													type="time"
 													className="event-time-input"
 													value={event.time}
 													onChange={(e) => updateEvent(event, "time", e.target.value)}
 												/>
 												<span> • </span>
-												<input 
+												<input
 													type="text"
 													className="event-location-input"
 													value={event.location}
@@ -365,7 +356,7 @@ function Calendar({ userData }) {
 												/>
 											</div>
 										</div>
-										<button 
+										<button
 											onClick={() => deleteEvent(event.id)}
 											className="delete-btn"
 										>
@@ -375,8 +366,8 @@ function Calendar({ userData }) {
 								))
 							) : (
 								<p className="no-data-message">
-									{selectedDay 
-										? "No events scheduled for this day" 
+									{selectedDay
+										? "No events scheduled for this day"
 										: "No events this month"}
 								</p>
 							)}
@@ -392,9 +383,8 @@ function Calendar({ userData }) {
 						{calendarDays.map((day, index) => (
 							<div
 								key={index}
-								className={`calendar-day ${day.empty ? "empty" : ""} ${
-									day.hasEvent ? "has-event" : ""
-								}`}
+								className={`calendar-day ${day.empty ? "empty" : ""} ${day.hasEvent ? "has-event" : ""
+									}`}
 								onClick={() => !day.empty && handleDayClick(day)}
 							>
 								{day.day}

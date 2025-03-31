@@ -57,7 +57,8 @@
 /* Updated widgets container for new layout */
 .widgets-container {
 	display: grid;
-	grid-template-columns: 1fr 2fr; /* Calendar takes up more space */
+	grid-template-columns: 1fr 2fr;
+	/* Calendar takes up more space */
 	grid-template-rows: 1fr 1fr;
 	gap: 1.5rem;
 	padding: 1.5rem;
@@ -568,11 +569,13 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background-color: rgba(0, 0, 0, 0.7); /* semi-transparent overlay */
+	background-color: rgba(0, 0, 0, 0.7);
+	/* semi-transparent overlay */
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	z-index: 9999; /* ensure it's on top */
+	z-index: 9999;
+	/* ensure it's on top */
 }
 
 /* The modal container (similar to login/register modals) */
@@ -583,7 +586,8 @@
 	width: 400px;
 	max-width: 90%;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-	position: relative; /* for close-button positioning */
+	position: relative;
+	/* for close-button positioning */
 	color: #fff;
 }
 
@@ -591,7 +595,8 @@
 	margin-top: 0;
 	margin-bottom: 1rem;
 	font-size: 1.25rem;
-	color: var(--teal); /* or pick any accent color */
+	color: var(--teal);
+	/* or pick any accent color */
 }
 
 /* Close button in the top-right corner */
@@ -629,7 +634,8 @@
 }
 
 .add-reminder-form input[type="date"] {
-	color-scheme: dark; /* so the date picker fits dark theme in some browsers */
+	color-scheme: dark;
+	/* so the date picker fits dark theme in some browsers */
 }
 
 .add-reminder-form button[type="submit"] {
@@ -700,7 +706,8 @@
 
 /* The "Delete" button for each reminder */
 .reminder-item button {
-	background: #e74c3c; /* red */
+	background: #e74c3c;
+	/* red */
 	color: #fff;
 	font-size: 0.9rem;
 	border: none;
@@ -717,7 +724,8 @@
 
 .completed-section {
 	margin-top: 1rem;
-	padding: 0.5rem; /* adds space so the button isn't clipped */
+	padding: 0.5rem;
+	/* adds space so the button isn't clipped */
 }
 
 /* ───────── CALENDAR EVENT STYLES ───────── */
@@ -728,15 +736,15 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
-  }
-  
-  .selected-day-header h3 {
+}
+
+.selected-day-header h3 {
 	margin: 0;
 	font-size: 1.1rem;
 	color: var(--teal);
-  }
-  
-  .back-button {
+}
+
+.back-button {
 	background: none;
 	border: none;
 	color: rgba(255, 255, 255, 0.7);
@@ -746,13 +754,13 @@
 	display: inline-block;
 	margin-bottom: 0.3rem;
 	text-align: left;
-  }
-  
-  .back-button:hover {
+}
+
+.back-button:hover {
 	color: var(--teal);
-  }
-  
-  .event-title-input {
+}
+
+.event-title-input {
 	background: transparent;
 	border: none;
 	border-bottom: 1px solid transparent;
@@ -761,43 +769,53 @@
 	padding: 0;
 	width: 100%;
 	font-weight: 500;
-  }
-  
-  .event-title-input:focus {
+}
+
+.event-title-input:focus {
 	outline: none;
 	border-bottom: 1px solid var(--teal);
-  }
-  
-  .event-meta {
+}
+
+.event-meta {
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
 	margin-top: 0.3rem;
-  }
-  
-  .event-time-input, .event-location-input {
+}
+
+.event-time-input,
+.event-location-input {
 	background: transparent;
 	border: none;
 	border-bottom: 1px solid transparent;
 	font-size: 0.85rem;
 	color: rgba(255, 255, 255, 0.7);
 	padding: 0;
-  }
-  
-  .event-time-input {
-	width: 80px;
-  }
-  
-  .event-location-input {
+
+}
+
+.event-time-input {
+	background: transparent;
+	border: none;
+	border-bottom: 1px solid transparent;
+	font-size: 1rem;
+	color: white;
+	padding: 0;
+	width: 100%;
+	font-weight: 500;
+}
+
+.event-location-input {
 	flex: 1;
-  }
-  
-  .event-time-input:focus, .event-location-input:focus {
+}
+
+.event-time-input:focus,
+.event-location-input:focus {
 	outline: none;
 	border-bottom: 1px solid var(--teal);
-  }
-  
-  .delete-btn {
+}
+
+.delete-btn {
 	background: #e74c3c;
 	color: white;
 	border: none;
@@ -806,250 +824,251 @@
 	cursor: pointer;
 	font-size: 0.85rem;
 	transition: background 0.2s;
-  }
-  
-  .delete-btn:hover {
+	margin-left: auto;
+}
+
+.delete-btn:hover {
 	background: #c0392b;
-  }
-  
-  .calendar-day {
+}
+
+.calendar-day {
 	cursor: pointer;
-  }
-  
-  .calendar-day:not(.empty):hover {
+}
+
+.calendar-day:not(.empty):hover {
 	background-color: rgba(78, 205, 196, 0.2);
-  }
-  
-  /* Form input for time */
-  input[type="time"] {
-	background-color: #1a2634;
+}
+
+/* Form input for time */
+input[type="time"] {
+	/* background-color: #1a2634; */
 	color: #fff;
-	border: 1px solid var(--teal);
-	border-radius: 4px;
-	padding: 0.5rem;
-	font-size: 1rem;
+	/* border: 1px solid var(--teal); */
+	/* border-radius: 4px; */
+	/* padding: 0.5rem; */
+	/* font-size: 1rem; */
 	color-scheme: dark;
-  }
+}
 
-
-  /* Group Modal Styles - Add to Home.css */
+/* Group Modal Styles - Add to Home.css */
 
 .group-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.7);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 9999;
 }
 
 .group-container {
-    background-color: #2c3e50;
-    padding: 2rem;
-    border-radius: 8px;
-    width: 500px;
-    max-width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    position: relative;
-    color: #fff;
+	background-color: #2c3e50;
+	padding: 2rem;
+	border-radius: 8px;
+	width: 500px;
+	max-width: 90%;
+	max-height: 80vh;
+	overflow-y: auto;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+	position: relative;
+	color: #fff;
 }
 
 .group-container .close-button {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #fff;
-    cursor: pointer;
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
+	background: none;
+	border: none;
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: #fff;
+	cursor: pointer;
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
 }
 
 /* Group Details View */
 .group-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
 }
 
 .group-icon.large {
-    width: 60px;
-    height: 60px;
-    font-size: 1.5rem;
+	width: 60px;
+	height: 60px;
+	font-size: 1.5rem;
 }
 
 .group-details-view h2 {
-    margin: 0;
-    color: var(--teal);
-    font-size: 1.5rem;
+	margin: 0;
+	color: var(--teal);
+	font-size: 1.5rem;
 }
 
 .group-stats {
-    display: flex;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	display: flex;
+	gap: 2rem;
+	margin-bottom: 1.5rem;
+	padding-bottom: 1.5rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .stat-value {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: white;
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: white;
 }
 
 .stat-label {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.6);
-    margin-top: 0.3rem;
+	font-size: 0.85rem;
+	color: rgba(255, 255, 255, 0.6);
+	margin-top: 0.3rem;
 }
 
 .role-badge.large {
-    font-size: 0.9rem;
-    padding: 0.3em 1em;
+	font-size: 0.9rem;
+	padding: 0.3em 1em;
 }
 
 .group-section {
-    margin-bottom: 1.5rem;
+	margin-bottom: 1.5rem;
 }
 
 .group-section h3 {
-    margin: 0 0 0.75rem 0;
-    font-size: 1.1rem;
-    color: var(--teal);
+	margin: 0 0 0.75rem 0;
+	font-size: 1.1rem;
+	color: var(--teal);
 }
 
 .group-section p {
-    margin: 0;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	line-height: 1.5;
+	color: rgba(255, 255, 255, 0.8);
 }
 
 .meeting-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
 }
 
 .info-item {
-    display: flex;
-    gap: 0.5rem;
+	display: flex;
+	gap: 0.5rem;
 }
 
 .info-label {
-    font-weight: 600;
-    min-width: 80px;
-    color: rgba(255, 255, 255, 0.7);
+	font-weight: 600;
+	min-width: 80px;
+	color: rgba(255, 255, 255, 0.7);
 }
 
 .info-value {
-    color: white;
+	color: white;
 }
 
 .group-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
+	display: flex;
+	gap: 1rem;
+	margin-top: 2rem;
 }
 
-.primary-btn, .secondary-btn {
-    padding: 0.7em 1.2em;
-    border-radius: 4px;
-    font-weight: 500;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
+.primary-btn,
+.secondary-btn {
+	padding: 0.7em 1.2em;
+	border-radius: 4px;
+	font-weight: 500;
+	cursor: pointer;
+	border: none;
+	transition: all 0.2s;
 }
 
 .primary-btn {
-    background-color: var(--teal);
-    color: white;
-    flex: 1;
+	background-color: var(--teal);
+	color: white;
+	flex: 1;
 }
 
 .primary-btn:hover {
-    background-color: #39b1a3;
+	background-color: #39b1a3;
 }
 
 .secondary-btn {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-    flex: 1;
+	background-color: rgba(255, 255, 255, 0.1);
+	color: white;
+	flex: 1;
 }
 
 .secondary-btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+	background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Join Group View */
 .join-group-view h2 {
-    margin: 0 0 1rem 0;
-    color: var(--teal);
+	margin: 0 0 1rem 0;
+	color: var(--teal);
 }
 
 .join-instructions {
-    margin-bottom: 1.5rem;
-    color: rgba(255, 255, 255, 0.8);
+	margin-bottom: 1.5rem;
+	color: rgba(255, 255, 255, 0.8);
 }
 
 .error-message {
-    background-color: rgba(231, 76, 60, 0.2);
-    color: #e74c3c;
-    padding: 0.75rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
+	background-color: rgba(231, 76, 60, 0.2);
+	color: #e74c3c;
+	padding: 0.75rem;
+	border-radius: 4px;
+	margin-bottom: 1rem;
 }
 
 .group-code-input {
-    width: 100%;
-    background-color: #1a2634;
-    color: white;
-    border: 1px solid var(--teal);
-    padding: 0.8rem;
-    border-radius: 4px;
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
+	width: 100%;
+	background-color: #1a2634;
+	color: white;
+	border: 1px solid var(--teal);
+	padding: 0.8rem;
+	border-radius: 4px;
+	font-size: 1rem;
+	margin-bottom: 1.5rem;
 }
 
 .group-code-input:focus {
-    outline: none;
-    border-color: #39b1a3;
+	outline: none;
+	border-color: #39b1a3;
 }
 
 .group-help {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    text-align: center;
+	margin-top: 1.5rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
+	text-align: center;
 }
 
 .group-help p {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.9rem;
-    margin: 0;
+	color: rgba(255, 255, 255, 0.6);
+	font-size: 0.9rem;
+	margin: 0;
 }
 
 /* Update the existing group items to be clickable */
 .group-item {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .group-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+	background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Chat Modal Styles */
@@ -1066,136 +1085,136 @@
 	flex-direction: column;
 	overflow: hidden;
 	z-index: 99;
-  }
-  
-  .chat-container {
+}
+
+.chat-container {
 	display: flex;
 	width: 100%;
 	height: 100%;
-  }
-  
-  .chat-sidebar {
+}
+
+.chat-sidebar {
 	width: 220px;
 	background-color: var(--widget-header);
 	border-right: 1px solid rgba(255, 255, 255, 0.05);
 	display: flex;
 	flex-direction: column;
-  }
-  
-  .chat-conversations {
+}
+
+.chat-conversations {
 	flex: 1;
 	overflow-y: auto;
-  }
-  
-  .chat-conversation {
+}
+
+.chat-conversation {
 	display: flex;
 	align-items: center;
 	padding: 1rem;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 	cursor: pointer;
 	transition: background-color 0.2s;
-  }
-  
-  .chat-conversation:hover {
+}
+
+.chat-conversation:hover {
 	background-color: rgba(255, 255, 255, 0.05);
-  }
-  
-  .chat-conversation.active {
+}
+
+.chat-conversation.active {
 	background-color: rgba(78, 205, 196, 0.1);
 	border-left: 3px solid var(--teal);
-  }
-  
-  .chat-main {
+}
+
+.chat-main {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
-  }
-  
-  .chat-main-header {
+}
+
+.chat-main-header {
 	padding: 1rem;
 	background-color: var(--widget-header);
 	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  }
-  
-  .chat-main-header h3 {
+}
+
+.chat-main-header h3 {
 	margin: 0;
 	color: var(--teal);
-  }
-  
-  .chat-messages {
+}
+
+.chat-messages {
 	flex: 1;
 	padding: 1rem;
 	overflow-y: auto;
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
-  }
-  
-  .message {
+}
+
+.message {
 	display: flex;
 	max-width: 75%;
-  }
-  
-  .message-user {
+}
+
+.message-user {
 	align-self: flex-end;
-  }
-  
-  .message-other {
+}
+
+.message-other {
 	align-self: flex-start;
-  }
-  
-  .message-content {
+}
+
+.message-content {
 	padding: 0.8rem;
 	border-radius: 12px;
 	position: relative;
-  }
-  
-  .message-user .message-content {
+}
+
+.message-user .message-content {
 	background-color: var(--teal);
 	color: white;
 	border-bottom-right-radius: 0;
-  }
-  
-  .message-other .message-content {
+}
+
+.message-other .message-content {
 	background-color: var(--widget-header);
 	color: white;
 	border-bottom-left-radius: 0;
-  }
-  
-  .message-content p {
+}
+
+.message-content p {
 	margin: 0;
-  }
-  
-  .message-time {
+}
+
+.message-time {
 	font-size: 0.7rem;
 	color: rgba(255, 255, 255, 0.7);
 	margin-top: 0.3rem;
 	display: block;
 	text-align: right;
-  }
-  
-  .chat-input-container {
+}
+
+.chat-input-container {
 	padding: 1rem;
 	display: flex;
 	gap: 0.5rem;
 	background-color: var(--widget-header);
-  }
-  
-  .chat-input {
+}
+
+.chat-input {
 	flex: 1;
 	background-color: rgba(255, 255, 255, 0.1);
 	border: none;
 	color: white;
 	padding: 0.8rem;
 	border-radius: 20px;
-  }
-  
-  .chat-input:focus {
+}
+
+.chat-input:focus {
 	outline: none;
 	background-color: rgba(255, 255, 255, 0.15);
-  }
-  
-  .chat-send-btn {
+}
+
+.chat-send-btn {
 	background-color: var(--teal);
 	color: white;
 	border: none;
@@ -1203,39 +1222,39 @@
 	padding: 0 1.2rem;
 	cursor: pointer;
 	transition: background-color 0.2s;
-  }
-  
-  .chat-send-btn:hover {
+}
+
+.chat-send-btn:hover {
 	background-color: #39b1a3;
-  }
-  
-  /* Make chat modal responsive */
-  @media (max-width: 768px) {
+}
+
+/* Make chat modal responsive */
+@media (max-width: 768px) {
 	.chat-modal {
-	  width: 90%;
-	  height: 80%;
-	  bottom: 10%;
-	  right: 5%;
-	  left: 5%;
+		width: 90%;
+		height: 80%;
+		bottom: 10%;
+		right: 5%;
+		left: 5%;
 	}
-	
+
 	.chat-sidebar {
-	  width: 35%;
+		width: 35%;
 	}
-  }
-  
-  /* For very small screens */
-  @media (max-width: 480px) {
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
 	.chat-container {
-	  flex-direction: column;
+		flex-direction: column;
 	}
-	
+
 	.chat-sidebar {
-	  width: 100%;
-	  height: 30%;
+		width: 100%;
+		height: 30%;
 	}
-	
+
 	.chat-main {
-	  height: 70%;
+		height: 70%;
 	}
-  }
+}
