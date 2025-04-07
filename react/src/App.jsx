@@ -129,7 +129,7 @@ function App() {
 			<header>
 				<div className="app-container header-content">
 					<div className="logo">
-						<img src="/src/assets/Logo.png" alt="Faith Connect Logo" />
+						<img src="/Logo.png" alt="Faith Connect Logo" />
 					</div>
 
 					<nav className="nav-links">
