@@ -163,13 +163,13 @@ function Home({ userData, onLogout }) {
 		<div className="main-dashboard">
 		  <header className="dashboard-header">
 			<div className="logo">
-			  <img src="/src/assets/Logo.png" alt="Faith Connect Logo" />
+			  <img src="/Logo.png" alt="Faith Connect Logo" />
 			</div>
 			<div className="user-controls">
 			  <span className="username">Welcome, {userData.user_metadata.first_name}</span>
 			  {userData && (
 				<img
-				  src="/src/assets/profile-icon.png"
+				  src="/profile-icon.png"
 				  alt="Profile"
 				  className="profile-icon"
 				  onClick={() => setEditProfile(true)} // Open profile edit modal
@@ -262,7 +262,7 @@ function Home({ userData, onLogout }) {
 			{/* Chat Icon */}
 			<div className="chat-icon" onClick={() => setIsChatOpen(!isChatOpen)}>
 				<img
-					src="/src/assets/message-icon.png"
+					src="/message-icon.png"
 					alt="Messages"
 					className="chat-icon-image"
 				/>
