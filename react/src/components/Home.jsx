@@ -4,24 +4,25 @@ import Reminders from "../modal/Reminders";
 import Calendar from "../modal/Calendar";
 import GroupModal from "../modal/GroupModal";
 import ChatModal from "../modal/ChatModal";
+import { supabase } from "../utils/supabase";
 
 function ProfileEdit({ userData, onSave }) {
-    const [name, setName] = useState(userData.user_metadata?.first_name || '');
-    const [email, setEmail] = useState(userData.user_metadata?.email || '');
+	const [name, setName] = useState(userData.user_metadata?.first_name || '');
+	const [email, setEmail] = useState(userData.user_metadata?.email || '');
 
-    return (
-        <div className="profile-edit">
-            <label>
-                Name:
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-            </label>
-            <label>
-                Email:
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            </label>
-            <button onClick={() => onSave(name, email)}>Save</button>
-        </div>
-    );
+	return (
+		<div className="profile-edit">
+			<label>
+				Name:
+				<input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+			</label>
+			<label>
+				Email:
+				<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+			</label>
+			<button onClick={() => onSave(name, email)}>Save</button>
+		</div>
+	);
 }
 
 function Home({ userData, onLogout }) {
@@ -42,7 +43,7 @@ function Home({ userData, onLogout }) {
 	// Chat state
 	const [isChatOpen, setIsChatOpen] = useState(false);
 	const [activeChatId, setActiveChatId] = useState(null);
-	
+
 	// Group modal states
 	const [showJoinGroupModal, setShowJoinGroupModal] = useState(false);
 	const [selectedGroup, setSelectedGroup] = useState(null);
@@ -84,13 +85,29 @@ function Home({ userData, onLogout }) {
 				meetingTime: "Tuesdays at 7 AM",
 				location: "Prayer Room"
 			};
-			
+
 			setGroups([...groups, newGroup]);
 			setShowJoinGroupModal(false);
 			setJoinCode("");
 			setJoinError("");
 		} else {
 			setJoinError("Invalid join code. Please try again.");
+		}
+	};
+
+	// Function to handle profile edit section
+	const handleSaveProfile = async () => {
+		const { error } = await supabase.auth.updateUser({
+			data: {
+				first_name: name,
+				email: email,
+				phone: phone,
+			},
+		});
+		if (error) {
+			console.log("Profile update error:", error.message);
+		} else {
+			setEditProfile(false);
 		}
 	};
 
@@ -101,84 +118,84 @@ function Home({ userData, onLogout }) {
 	};
 
 	const [editProfile, setEditProfile] = useState(false);
-    const [name, setName] = useState(userData.user_metadata?.first_name || '');
-    const [email, setEmail] = useState(userData.user_metadata?.email || '');
-    const [phone, setPhone] = useState(userData.user_metadata?.phone || '');
-    const [role, setRole] = useState(userData.user_metadata?.role || '');
-    const [profileImage, setProfileImage] = useState(null);
+	const [name, setName] = useState(userData.user_metadata?.first_name || '');
+	const [email, setEmail] = useState(userData.user_metadata?.email || '');
+	const [phone, setPhone] = useState(userData.user_metadata?.phone || '');
+	const [role, setRole] = useState(userData.user_metadata?.role || '');
+	const [profileImage, setProfileImage] = useState(null);
 
-    const handleImageChange = (event) => {
-        if (event.target.files && event.target.files[0]) {
-            setProfileImage(URL.createObjectURL(event.target.files[0]));
-        }
-    };
+	const handleImageChange = (event) => {
+		if (event.target.files && event.target.files[0]) {
+			setProfileImage(URL.createObjectURL(event.target.files[0]));
+		}
+	};
 
-    if (editProfile) {
-        return (
-            <div className="profile-edit">
-                <label>
-                    Name:
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter your name"
-                    />
-                </label>
-                <label>
-                    Email:
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Enter your email"
-                    />
-                </label>
-                <label>
-                    Phone:
-                    <input
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="Enter your phone number"
-                    />
-                </label>
-                <label>
-                    Role:
-                    <input type="text" value={role} onChange={(e) => setRole(e.target.value)} />
-                </label>
-                <label>
-                    Profile Image:
-                    <input type="file" onChange={handleImageChange} />
-                    {profileImage && <img src={profileImage} alt="Profile Preview" className="profile-image-preview"/>}
-                </label>
-                <button onClick={() => {setEditProfile(false)}}>
-                    Save Changes
-                </button>
-            </div>
-        );
-    }
+	if (editProfile) {
+		return (
+			<div className="profile-edit">
+				<label>
+					Name:
+					<input
+						type="text"
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+						placeholder="Enter your name"
+					/>
+				</label>
+				<label>
+					Email:
+					<input
+						type="email"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+						placeholder="Enter your email"
+					/>
+				</label>
+				<label>
+					Phone:
+					<input
+						type="tel"
+						value={phone}
+						onChange={(e) => setPhone(e.target.value)}
+						placeholder="Enter your phone number"
+					/>
+				</label>
+				<label>
+					Role:
+					<input type="text" value={role} onChange={(e) => setRole(e.target.value)} />
+				</label>
+				<label>
+					Profile Image:
+					<input type="file" onChange={handleImageChange} />
+					{profileImage && <img src={profileImage} alt="Profile Preview" className="profile-image-preview" />}
+				</label>
+				<button onClick={() => { handleSaveProfile }}>
+					Save Changes
+				</button>
+			</div>
+		);
+	}
 
 	return (
 		<div className="main-dashboard">
-		  <header className="dashboard-header">
-			<div className="logo">
-			  <img src="/Logo.png" alt="Faith Connect Logo" />
-			</div>
-			<div className="user-controls">
-			  <span className="username">Welcome, {userData.user_metadata.first_name}</span>
-			  {userData && (
-				<img
-				  src="/profile-icon.png"
-				  alt="Profile"
-				  className="profile-icon"
-				  onClick={() => setEditProfile(true)} // Open profile edit modal
-				/>
-			  )}
-			  <button className="logout-btn" onClick={onLogout}>
-				Log Out
-			  </button>
-			</div>
+			<header className="dashboard-header">
+				<div className="logo">
+					<img src="/Logo.png" alt="Faith Connect Logo" />
+				</div>
+				<div className="user-controls">
+					<span className="username">Welcome, {userData.user_metadata.first_name}</span>
+					{userData && (
+						<img
+							src="/profile-icon.png"
+							alt="Profile"
+							className="profile-icon"
+							onClick={() => setEditProfile(true)} // Open profile edit modal
+						/>
+					)}
+					<button className="logout-btn" onClick={onLogout}>
+						Log Out
+					</button>
+				</div>
 			</header>
 
 			<div className="widgets-container">
@@ -210,7 +227,7 @@ function Home({ userData, onLogout }) {
 				<div className="widget groups-widget">
 					<div className="widget-header">
 						<h2>Groups</h2>
-						<button 
+						<button
 							className="widget-action-btn"
 							onClick={openJoinGroupModal}
 						>
@@ -221,8 +238,8 @@ function Home({ userData, onLogout }) {
 						{groups.length > 0 ? (
 							<ul className="groups-list">
 								{groups.map((group) => (
-									<li 
-										key={group.id} 
+									<li
+										key={group.id}
 										className="group-item"
 										onClick={() => openGroupDetails(group)}
 									>
@@ -249,7 +266,7 @@ function Home({ userData, onLogout }) {
 
 			{/* Group Modal */}
 			{showJoinGroupModal && (
-				<GroupModal 
+				<GroupModal
 					onClose={() => setShowJoinGroupModal(false)}
 					selectedGroup={selectedGroup}
 					joinCode={joinCode}
@@ -270,8 +287,8 @@ function Home({ userData, onLogout }) {
 
 			{/* Chat Modal - Updated */}
 			{isChatOpen && (
-				<ChatModal 
-					onClose={() => setIsChatOpen(false)} 
+				<ChatModal
+					onClose={() => setIsChatOpen(false)}
 					activeChatId={activeChatId}
 				/>
 			)}

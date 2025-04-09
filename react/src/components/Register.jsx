@@ -9,6 +9,7 @@ function Register({ onClose, onSwitchToLogin, onRegister }) {
 		email: "",
 		password: "",
 		confirmPassword: "",
+		phone: "",
 		agreeTerms: false,
 	});
 	const [errors, setErrors] = useState({});
@@ -56,6 +57,7 @@ function Register({ onClose, onSwitchToLogin, onRegister }) {
 					data: {
 						first_name: formData.firstName,
 						last_name: formData.lastName,
+						phone: formData.phone,
 					},
 				},
 			});
@@ -153,6 +155,21 @@ function Register({ onClose, onSwitchToLogin, onRegister }) {
 						/>
 						{errors.confirmPassword && (
 							<div className="error-message">{errors.confirmPassword}</div>
+						)}
+					</div>
+
+					<div className="form-group">
+						<label htmlFor="phone">Phone Number</label>
+						<input
+							type="phone"
+							id="phone"
+							name="phone"
+							value={formData.phone}
+							onChange={handleChange}
+							className={errors.phone ? "error" : ""}
+						/>
+						{errors.phone && (
+							<div className="error-message">{errors.phone}</div>
 						)}
 					</div>
 
