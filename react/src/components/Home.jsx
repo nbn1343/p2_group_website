@@ -6,30 +6,11 @@ import GroupModal from "../modal/GroupModal";
 import ChatModal from "../modal/ChatModal";
 import { supabase } from "../utils/supabase";
 
-function ProfileEdit({ userData, onSave }) {
-	const [name, setName] = useState(userData.user_metadata?.first_name || '');
-	const [email, setEmail] = useState(userData.user_metadata?.email || '');
-
-	return (
-		<div className="profile-edit">
-			<label>
-				Name:
-				<input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-			</label>
-			<label>
-				Email:
-				<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-			</label>
-			<button onClick={() => onSave(name, email)}>Save</button>
-		</div>
-	);
-}
-
 function Home({ userData, onLogout }) {
-	// Use the userData prop to set the first name directly
+	// User info
 	const firstName = userData?.user_metadata?.first_name || "User";
 
-	// Reminder
+	// Reminders
 	const [showAddReminderForm, setShowAddReminderForm] = useState(false);
 
 	// Mock data for groups
@@ -50,7 +31,15 @@ function Home({ userData, onLogout }) {
 	const [joinCode, setJoinCode] = useState("");
 	const [joinError, setJoinError] = useState("");
 
-	// Function to open the join group modal
+	// Profile edit states
+	const [editProfile, setEditProfile] = useState(false);
+	const [name, setName] = useState(userData.user_metadata?.first_name || '');
+	const [email, setEmail] = useState(userData.user_metadata?.email || '');
+	const [phone, setPhone] = useState(userData.user_metadata?.phone || '');
+	const [role, setRole] = useState(userData.user_metadata?.role || '');
+	const [profileImage, setProfileImage] = useState(null);
+
+	// Open join group modal
 	const openJoinGroupModal = () => {
 		setSelectedGroup(null);
 		setJoinCode("");
@@ -58,7 +47,7 @@ function Home({ userData, onLogout }) {
 		setShowJoinGroupModal(true);
 	};
 
-	// Function to open group details modal
+	// Open group details modal
 	const openGroupDetails = (group) => {
 		setSelectedGroup(group);
 		setJoinCode("");
@@ -66,16 +55,14 @@ function Home({ userData, onLogout }) {
 		setShowJoinGroupModal(true);
 	};
 
-	// Function to handle joining a group with a code
+	// Handle joining a group with a code
 	const handleJoinGroup = () => {
 		if (!joinCode.trim()) {
 			setJoinError("Please enter a valid join code");
 			return;
 		}
-
-		// Mock functionality - in a real app, this would validate against a database
+		// Mock functionality
 		if (joinCode === "DEMO123") {
-			// Add a new mock group
 			const newGroup = {
 				id: groups.length + 1,
 				name: "Prayer Team",
@@ -85,7 +72,6 @@ function Home({ userData, onLogout }) {
 				meetingTime: "Tuesdays at 7 AM",
 				location: "Prayer Room"
 			};
-
 			setGroups([...groups, newGroup]);
 			setShowJoinGroupModal(false);
 			setJoinCode("");
@@ -95,7 +81,14 @@ function Home({ userData, onLogout }) {
 		}
 	};
 
-	// Function to handle profile edit section
+	// Handle profile image change
+	const handleImageChange = (event) => {
+		if (event.target.files && event.target.files[0]) {
+			setProfileImage(URL.createObjectURL(event.target.files[0]));
+		}
+	};
+
+	// Save profile changes
 	const handleSaveProfile = async () => {
 		const { error } = await supabase.auth.updateUser({
 			data: {
@@ -111,28 +104,23 @@ function Home({ userData, onLogout }) {
 		}
 	};
 
-	// Function to open chat with specific person/group
+	// Open chat with specific person/group
 	const openChat = (chatId) => {
 		setActiveChatId(chatId);
 		setIsChatOpen(true);
 	};
 
-	const [editProfile, setEditProfile] = useState(false);
-	const [name, setName] = useState(userData.user_metadata?.first_name || '');
-	const [email, setEmail] = useState(userData.user_metadata?.email || '');
-	const [phone, setPhone] = useState(userData.user_metadata?.phone || '');
-	const [role, setRole] = useState(userData.user_metadata?.role || '');
-	const [profileImage, setProfileImage] = useState(null);
-
-	const handleImageChange = (event) => {
-		if (event.target.files && event.target.files[0]) {
-			setProfileImage(URL.createObjectURL(event.target.files[0]));
-		}
-	};
-
+	// --- PROFILE EDIT SECTION WITH EXIT BUTTON ---
 	if (editProfile) {
 		return (
 			<div className="profile-edit">
+				<button
+					className="exit-edit-btn"
+					onClick={() => setEditProfile(false)}
+					aria-label="Exit profile edit"
+				>
+					×
+				</button>
 				<label>
 					Name:
 					<input
@@ -169,7 +157,7 @@ function Home({ userData, onLogout }) {
 					<input type="file" onChange={handleImageChange} />
 					{profileImage && <img src={profileImage} alt="Profile Preview" className="profile-image-preview" />}
 				</label>
-				<button onClick={() => { handleSaveProfile }}>
+				<button onClick={handleSaveProfile}>
 					Save Changes
 				</button>
 			</div>
@@ -183,13 +171,13 @@ function Home({ userData, onLogout }) {
 					<img src="/Logo.png" alt="Faith Connect Logo" />
 				</div>
 				<div className="user-controls">
-					<span className="username">Welcome, {userData.user_metadata.first_name}</span>
+					<span className="username">Welcome, {firstName}</span>
 					{userData && (
 						<img
 							src="/profile-icon.png"
 							alt="Profile"
 							className="profile-icon"
-							onClick={() => setEditProfile(true)} // Open profile edit modal
+							onClick={() => setEditProfile(true)}
 						/>
 					)}
 					<button className="logout-btn" onClick={onLogout}>
@@ -285,7 +273,7 @@ function Home({ userData, onLogout }) {
 				/>
 			</div>
 
-			{/* Chat Modal - Updated */}
+			{/* Chat Modal */}
 			{isChatOpen && (
 				<ChatModal
 					onClose={() => setIsChatOpen(false)}
