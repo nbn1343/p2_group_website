@@ -4,7 +4,9 @@ import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import Home from "./components/Home.jsx";
 import { useNavigate } from "react-router-dom";
-
+import MemberHome from "./components/MemberHome.jsx";
+import ParentHome from "./components/ParentHome.jsx";
+import YouthHome from "./components/YouthHome.jsx";
 // Mock data for demonstration
 const upcomingEvents = [
 	{ id: 1, title: "Youth Bible Study", date: "2025-03-20", type: "youth" },
@@ -116,7 +118,20 @@ function App() {
 
 	// If user is authenticated, show the main dashboard
 	if (isAuthenticated) {
-		return <Home userData={userData} onLogout={handleLogout} />;
+		const role =
+			userData?.user_metadata?.role ||
+			userData?.raw_user_meta_data?.role ||
+			userData?.role;
+
+		if (role === "leader") {
+			return <Home userData={userData} onLogout={handleLogout} />;
+		} if (role === "member") {
+			return <MemberHome userData={userData} onLogout={handleLogout} />;
+		} if (role === "parent") {
+			return <ParentHome userData={userData} onLogout={handleLogout} />;
+		} if (role === "youth") {
+			return <YouthHome userData={userData} onLogout={handleLogout} />;
+		}
 	}
 
 	// Otherwise show the landing page with login/register functionality

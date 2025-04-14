@@ -11,14 +11,23 @@ function Register({ onClose, onSwitchToLogin, onRegister }) {
 		confirmPassword: "",
 		phone: "",
 		agreeTerms: false,
+		role: "", // Add role
 	});
 	const [errors, setErrors] = useState({});
+	const [registerError, setRegisterError] = useState("");
 
 	const handleChange = (e) => {
 		const { name, value, type, checked } = e.target;
 		setFormData({
 			...formData,
 			[name]: type === "checkbox" ? checked : value,
+		});
+	};
+
+	const handleRoleSelect = (role) => {
+		setFormData({
+			...formData,
+			role,
 		});
 	};
 
@@ -39,6 +48,8 @@ function Register({ onClose, onSwitchToLogin, onRegister }) {
 			newErrors.confirmPassword = "Passwords do not match";
 		}
 
+		if (!formData.role) newErrors.role = "Please select a role";
+
 		if (!formData.agreeTerms)
 			newErrors.agreeTerms = "You must agree to the terms and conditions";
 
@@ -49,7 +60,6 @@ function Register({ onClose, onSwitchToLogin, onRegister }) {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (validate()) {
-			// Call Supabase sign-up method with user metadata
 			const { data, error } = await supabase.auth.signUp({
 				email: formData.email,
 				password: formData.password,
@@ -58,13 +68,14 @@ function Register({ onClose, onSwitchToLogin, onRegister }) {
 						first_name: formData.firstName,
 						last_name: formData.lastName,
 						phone: formData.phone,
+						role: formData.role, // Save role in metadata
 					},
 				},
 			});
 
 			if (error) {
 				console.error("Error signing up:", error.message);
-				// Handle the error (display a message to the user, etc.)
+				setRegisterError("Registration failed: " + error.message);
 			} else {
 				console.log("Registration successful:", data);
 				onRegister(formData);
@@ -79,6 +90,10 @@ function Register({ onClose, onSwitchToLogin, onRegister }) {
 					×
 				</button>
 				<h2>Create an Account</h2>
+
+				{registerError && (
+					<div className="login-error-message">{registerError}</div>
+				)}
 
 				<form onSubmit={handleSubmit}>
 					<div className="form-row">
@@ -170,6 +185,26 @@ function Register({ onClose, onSwitchToLogin, onRegister }) {
 						/>
 						{errors.phone && (
 							<div className="error-message">{errors.phone}</div>
+						)}
+					</div>
+
+					<div className="form-group">
+						<label>Role</label>
+						<div className="role-select-group">
+							{["leader", "member", "parent", "youth"].map((role) => (
+								<button
+									type="button"
+									key={role}
+									className={`role-btn${formData.role === role ? " selected" : ""}`}
+									onClick={() => handleRoleSelect(role)}
+									aria-pressed={formData.role === role}
+								>
+									{role.charAt(0).toUpperCase() + role.slice(1)}
+								</button>
+							))}
+						</div>
+						{errors.role && (
+							<div className="error-message">{errors.role}</div>
 						)}
 					</div>
 
