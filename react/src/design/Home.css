@@ -704,7 +704,6 @@
 	font-family: "Montserrat", sans-serif;
 }
 
-/* The "Delete" button for each reminder */
 .reminder-item button {
 	background: #e74c3c;
 	/* red */
@@ -723,9 +722,10 @@
 }
 
 .completed-section {
-	margin-top: 1rem;
+	margin-top: 3rem;
 	padding: 0.5rem;
-	/* adds space so the button isn't clipped */
+	padding-top: 5rem;
+
 }
 
 /* ───────── CALENDAR EVENT STYLES ───────── */
