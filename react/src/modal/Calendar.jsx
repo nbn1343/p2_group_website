@@ -64,17 +64,13 @@ function Calendar({ userData }) {
 
 		// Add days of the month with event check
 		for (let i = 1; i <= daysInMonth; i++) {
-			const date = new Date(year, month, i);
-			const dateString = date.toISOString().split("T")[0];
+			// Create date without timezone conversion
+			const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
 
 			// Check if there are events on this day
 			const hasEvent = events.some((event) => {
-				const eventDate = new Date(event.date);
-				return (
-					eventDate.getDate() === i &&
-					eventDate.getMonth() === month &&
-					eventDate.getFullYear() === year
-				);
+				const eventDateString = event.date.split('T')[0];
+				return eventDateString === dateString;
 			});
 
 			days.push({
@@ -90,16 +86,26 @@ function Calendar({ userData }) {
 
 	// Filter events for the current month
 	const filteredEvents = events.filter((event) => {
-		const eventDate = new Date(event.date);
+		if (!event.date) return false;
+		
+		const eventDateParts = event.date.split('T')[0].split('-');
+		const eventYear = parseInt(eventDateParts[0]);
+		const eventMonth = parseInt(eventDateParts[1]) - 1; // JS months are 0-indexed
+		
 		return (
-			eventDate.getMonth() === currentDate.getMonth() &&
-			eventDate.getFullYear() === currentDate.getFullYear()
+			eventMonth === currentDate.getMonth() &&
+			eventYear === currentDate.getFullYear()
 		);
 	});
 
-	// Filter events for a specific day
+	// Filter events for a specific day - FIXED FUNCTION
 	const getDayEvents = (dateString) => {
-		return events.filter((event) => event.date === dateString);
+		return events.filter((event) => {
+			if (!event.date) return false;
+			// Compare the date strings directly
+			const eventDateString = event.date.split('T')[0];
+			return eventDateString === dateString;
+		});
 	};
 
 	// Handle day click to show that day's events
@@ -110,7 +116,7 @@ function Calendar({ userData }) {
 		setCalendarView("events");
 	};
 
-	// Add a new event
+	// Add a new event - FIXED TO PREVENT TIMEZONE ISSUES
 	const addEvent = async (e) => {
 		e.preventDefault();
 
@@ -122,10 +128,11 @@ function Calendar({ userData }) {
 		setValidationError("");
 		setSupabaseError("");
 
+		// Use the date input value directly without creating a Date object
 		const { error } = await supabase.from("events").insert([
 			{
 				title: newEventTitle,
-				date: newEventDate,
+				date: newEventDate, // Use the string directly
 				time: newEventTime,
 				location: newEventLocation,
 				user_id: userData.id,
@@ -199,8 +206,9 @@ function Calendar({ userData }) {
 
 	// Format date for display
 	const formatDate = (dateString) => {
-		const date = new Date(dateString);
-		return date.toLocaleDateString();
+		// Split the date string and create a date without timezone conversion
+		const [year, month, day] = dateString.split('-');
+		return new Date(year, month - 1, day).toLocaleDateString();
 	};
 
 	if (loading) return <div>Loading calendar...</div>;
@@ -325,12 +333,13 @@ function Calendar({ userData }) {
 									<li key={event.id} className="event-item">
 										<div className="event-date">
 											<span className="event-day">
-												{new Date(event.date).getDate()}
+												{event.date ? event.date.split('T')[0].split('-')[2] : ''}
 											</span>
 											<span className="event-month">
-												{new Date(event.date).toLocaleString("default", {
-													month: "short",
-												})}
+												{event.date ? 
+													new Date(0, parseInt(event.date.split('T')[0].split('-')[1]) - 1).toLocaleString("default", { month: "short" }) : 
+													''
+												}
 											</span>
 										</div>
 										<div className="event-details">
