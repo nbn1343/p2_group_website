@@ -9,6 +9,7 @@ function Login({ onClose, onSwitchToRegister, onLogin }) {
 		rememberMe: false,
 	});
 	const [errors, setErrors] = useState({});
+	const [loginError, setLoginError] = useState("");
 
 	const handleChange = (e) => {
 		const { name, value, type, checked } = e.target;
@@ -42,6 +43,7 @@ function Login({ onClose, onSwitchToRegister, onLogin }) {
 			});
 			if (error) {
 				console.error("Error logging in:", error.message);
+				setLoginError("Login failed: " + error.message);
 			} else {
 				const { data: userData } = await supabase.auth.getUser();
 				console.log("Login successful");
@@ -57,6 +59,10 @@ function Login({ onClose, onSwitchToRegister, onLogin }) {
 					×
 				</button>
 				<h2>Log In to Faith Connect</h2>
+
+				{loginError && (
+					<div className="login-error-message">{loginError}</div>
+				)}
 
 				<form onSubmit={handleSubmit}>
 					<div className="form-group">
