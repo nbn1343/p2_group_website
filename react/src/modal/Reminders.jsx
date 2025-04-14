@@ -17,6 +17,11 @@ function Reminders({ showAddForm, onCloseAddReminder, userData }) {
 
 	// Fetch reminders for the current user
 	const fetchReminders = async () => {
+		if (!userData || !userData.id) {
+			setLoading(false);
+			return;
+		  }
+		  
 		setLoading(true);
 		setSupabaseError("");
 		const { data, error } = await supabase
