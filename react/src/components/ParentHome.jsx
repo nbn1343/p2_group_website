@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../design/Home.css";
 import Calendar from "../modal/Calendar";
 import Reminders from "../modal/Reminders";
@@ -7,93 +7,164 @@ import ChatModal from "../modal/ChatModal";
 
 function ParentHome({ userData, onLogout, children }) {
   // User info
-  const firstName = userData?.user_metadata?.first_name || "User";
+  const firstName = userData?.user_metadata?.first_name || "Parent";
 
-  // State for selected child filter
+  // State management
   const [selectedChild, setSelectedChild] = useState("All");
-
-  // Mock data for groups with colors
-  const GROUP_COLORS = [
-    "#4ED1C4", // Teal (Youth Ministry)
-    "#FFB347", // Orange (Worship Team)
-    "#6C63FF", // Purple (Bible Study)
-    "#FF6B6B", // Red (Outreach Committee)
-    "#FFD166", // Yellow
-    "#43AA8B", // Green
-    "#3A86FF", // Blue
-  ];
-
-  const [groups, setGroups] = useState([
-    { id: 1, name: "Youth Ministry", members: 24, role: "Member", description: "Weekly activities and events for our church youth.", meetingTime: "Sundays at 4 PM", location: "Fellowship Hall", color: GROUP_COLORS[0] },
-    { id: 2, name: "Worship Team", members: 12, role: "Leader", description: "Music ministry team for Sunday services and special events.", meetingTime: "Thursdays at 7 PM", location: "Sanctuary", color: GROUP_COLORS[1] },
-    { id: 3, name: "Bible Study", members: 18, role: "Member", description: "Weekly Bible study focusing on different books and themes.", meetingTime: "Wednesdays at 6:30 PM", location: "Room 201", color: GROUP_COLORS[2] },
-    { id: 4, name: "Outreach Committee", members: 8, role: "Member", description: "Planning and coordinating community outreach events.", meetingTime: "First Monday of month at 6 PM", location: "Conference Room", color: GROUP_COLORS[3] },
-  ]);
-
+  const [currentGroups, setCurrentGroups] = useState([]);
   const [calendarGroupFilter, setCalendarGroupFilter] = useState([]);
   const [calendarView, setCalendarView] = useState("calendar");
-
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [activeChatId, setActiveChatId] = useState(null);
   const [activeChatGroup, setActiveChatGroup] = useState(null);
 
+  const [currentEvents, setCurrentEvents] = useState(calendarConfigurations.all);
+
+
+  // Group configuration
+  const GROUP_COLORS = [
+    "#4ED1C4", "#FFB347", "#6C63FF", "#FF6B6B", "#FFD166", "#43AA8B", "#3A86FF"
+  ];
+
+  // Group configurations indexed by name (lowercase) for easy lookup
+  const groupConfigurations = {
+    all: [
+      { id: 1, name: "Parent Council", members: 15, role: "Member", description: "Parent coordination group", meetingTime: "Monthly", location: "Conference Room", color: GROUP_COLORS[0] },
+      { id: 2, name: "Family Support", members: 20, role: "Volunteer", description: "Family assistance program", meetingTime: "Wednesdays 3 PM", location: "Community Center", color: GROUP_COLORS[1] }
+    ],
+    alice: [
+      { id: 3, name: "Youth", members: 15, role: "Singer", description: "Weekly choir practice", meetingTime: "Mondays 5 PM", location: "Music Room", color: GROUP_COLORS[0] },
+      { id: 4, name: "Young Womens", members: 10, role: "Player", description: "Church basketball league", meetingTime: "Wednesdays 6 PM", location: "Gym", color: GROUP_COLORS[1] }
+    ],
+    bob: [
+      { id: 5, name: "Deacans Quorum", members: 8, role: "Operator", description: "Audio/visual team", meetingTime: "Saturdays 10 AM", location: "Sanctuary", color: GROUP_COLORS[2] },
+      { id: 6, name: "Youth", members: 12, role: "Member", description: "Coding and tech projects", meetingTime: "Fridays 4 PM", location: "Computer Lab", color: GROUP_COLORS[3] }
+    ],
+    jimmy: [
+      { id: 7, name: "Youth", members: 20, role: "Volunteer", description: "Community service projects", meetingTime: "Sundays 1 PM", location: "Various", color: GROUP_COLORS[4] }
+    ],
+    john: [
+      { id: 8, name: "Priest Quorum", members: 6, role: "Guitarist", description: "Contemporary worship music", meetingTime: "Fridays 4 PM", location: "Sanctuary", color: GROUP_COLORS[5] },
+      { id: 9, name: "Youth", members: 10, role: "Member", description: "Creative arts group", meetingTime: "Tuesdays 3 PM", location: "Art Room", color: GROUP_COLORS[6] }
+    ]
+  };
+
+  // Place this near your groupConfigurations in ParentHome.jsx
+
+const calendarConfigurations = {
+	all: [
+	  { id: 1, title: "Parent Council Meeting", date: "2025-04-15", time: "6:00 PM", location: "Conference Room", groups: ["Parent Council"] },
+	  { id: 2, title: "Family Support Session", date: "2025-04-17", time: "3:00 PM", location: "Community Center", groups: ["Family Support"] }
+	],
+	alice: [
+	  { id: 1, title: "Choir Practice", date: "2025-04-20", time: "5:00 PM", location: "Music Room", groups: ["Youth Choir"] },
+	  { id: 2, title: "Basketball Game", date: "2025-04-22", time: "6:00 PM", location: "Gym", groups: ["Basketball Team"] },
+	  { id: 3, title: "Youth Group Meeting", date: "2025-04-25", time: "4:00 PM", location: "Fellowship Hall", groups: ["Youth Choir"] }
+	],
+	bob: [
+	  { id: 1, title: "Tech Crew Setup", date: "2025-04-18", time: "10:00 AM", location: "Sanctuary", groups: ["Tech Crew"] },
+	  { id: 2, title: "Programming Workshop", date: "2025-04-19", time: "4:00 PM", location: "Computer Lab", groups: ["Programming Club"] },
+	  { id: 3, title: "Audio/Visual Training", date: "2025-04-21", time: "3:00 PM", location: "Sanctuary", groups: ["Tech Crew"] }
+	],
+	jimmy: [
+	  { id: 1, title: "Community Cleanup", date: "2025-04-20", time: "1:00 PM", location: "City Park", groups: ["Outreach Team"] },
+	  { id: 2, title: "Volunteer Meeting", date: "2025-04-23", time: "2:00 PM", location: "Community Center", groups: ["Outreach Team"] },
+	  { id: 3, title: "Charity Event", date: "2025-04-26", time: "11:00 AM", location: "Downtown Plaza", groups: ["Outreach Team"] }
+	],
+	john: [
+	  { id: 1, title: "Band Practice", date: "2025-04-19", time: "4:00 PM", location: "Sanctuary", groups: ["Worship Band"] },
+	  { id: 2, title: "Art Workshop", date: "2025-04-21", time: "3:00 PM", location: "Art Room", groups: ["Art Club"] },
+	  { id: 3, title: "Sunday Worship", date: "2025-04-27", time: "10:00 AM", location: "Sanctuary", groups: ["Worship Band"] }
+	]
+  };
+  
+
+  // Initialize with default groups
+  useEffect(() => {
+    setCurrentGroups(groupConfigurations.all);
+  }, []);
+
+  // Handle child selection
   const handleChildChange = (event) => {
-    setSelectedChild(event.target.value);
-    // Optionally filter data based on the selected child
-    if (event.target.value !== "All") {
-      console.log(`Filtering dashboard for child ID ${event.target.value}`);
-      // Implement filtering logic here if needed
+    const childId = event.target.value;
+    setSelectedChild(childId);
+    
+    console.log("Selected child ID:", childId);
+    
+    if (childId === "All") {
+      setCurrentGroups(groupConfigurations.all);
+      console.log("Setting groups to 'all':", groupConfigurations.all);
+    } else {
+      // Convert ID to number for comparison (App.jsx passes numeric IDs)
+      const childIdNum = Number(childId);
+      const child = children.find(c => c.id === childIdNum);
+      
+      if (child) {
+        const childName = child.name.toLowerCase();
+        console.log("Found child:", child.name, "Looking for groups:", childName);
+        
+        if (groupConfigurations[childName]) {
+          setCurrentGroups(groupConfigurations[childName]);
+          console.log("Setting groups to:", groupConfigurations[childName]);
+        } else {
+          setCurrentGroups([]);
+          console.log("No groups found for:", childName);
+        }
+      } else {
+        console.log("Child not found for ID:", childId);
+        setCurrentGroups([]);
+      }
     }
   };
 
   return (
     <div className="main-dashboard">
       <header className="dashboard-header">
-  <div className="header-left">
-    <div className="logo">
-      <img src="/Logo.png" alt="Faith Connect Logo" />
-    </div>
-    <div className="child-filter">
-      <label htmlFor="child-select" className="child-filter-label">Filter by Child:</label>
-      <select
-        id="child-select"
-        value={selectedChild}
-        onChange={handleChildChange}
-        className="child-filter-dropdown"
-      >
-        <option value="All">All</option>
-        {children.map((child) => (
-          <option key={child.id} value={child.id}>
-            {child.name}
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
-  <div className="user-controls">
-    <span className="username">Welcome, {firstName}</span>
-    {userData && (
-      <img
-        src="/profile-icon.png"
-        alt="Profile"
-        className="profile-icon"
-        onClick={() => setEditProfile(true)}
-      />
-    )}
-    <button className="logout-btn" onClick={onLogout}>
-      Log Out
-    </button>
-  </div>
-</header>
+        <div className="header-left">
+          <div className="logo">
+            <img src="/Logo.png" alt="Faith Connect Logo" />
+          </div>
+          <div className="child-filter">
+            <label htmlFor="child-select" className="child-filter-label">
+              Filter by Child:
+            </label>
+            <select
+              id="child-select"
+              value={selectedChild}
+              onChange={handleChildChange}
+              className="child-filter-dropdown"
+            >
+              <option value="All">All</option>
+              {children.map((child) => (
+                <option key={child.id} value={child.id}>
+                  {child.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="user-controls">
+          <span className="username">Welcome, {firstName}</span>
+          {userData && (
+            <img
+              src="/profile-icon.png"
+              alt="Profile"
+              className="profile-icon"
+              onClick={() => console.log("Edit Profile")}
+            />
+          )}
+          <button className="logout-btn" onClick={onLogout}>
+            Log Out
+          </button>
+        </div>
+      </header>
 
-
-      {/* Widgets */}
       <div className="widgets-container">
         {/* Calendar Widget */}
         <div className="widget calendar-widget">
           <Calendar 
             userData={userData} 
-            groups={groups}
+            groups={currentGroups}
             externalGroupFilter={calendarGroupFilter}
             setExternalGroupFilter={setCalendarGroupFilter}
             externalCalendarView={calendarView}
@@ -114,12 +185,16 @@ function ParentHome({ userData, onLogout, children }) {
         {/* Groups Widget */}
         <div className="widget groups-widget">
           <div className="widget-header">
-            <h2>Groups</h2>
+            <h2>
+              {selectedChild === "All" 
+                ? "All Groups" 
+                : `${children.find(c => c.id === Number(selectedChild))?.name}'s Groups`}
+            </h2>
           </div>
           <div className="widget-content">
-            {groups.length > 0 ? (
+            {currentGroups && currentGroups.length > 0 ? (
               <ul className="groups-list">
-                {groups.map((group) => (
+                {currentGroups.map((group) => (
                   <li key={group.id} className="group-item">
                     <div 
                       className="group-icon"
@@ -129,7 +204,8 @@ function ParentHome({ userData, onLogout, children }) {
                     </div>
                     <div className="group-details">
                       <h3>{group.name}</h3>
-                      <p>{group.members} members •{" "}
+                      <p>
+                        {group.members} members •{" "}
                         <span className="role-badge">{group.role}</span>
                       </p>
                     </div>
@@ -137,7 +213,11 @@ function ParentHome({ userData, onLogout, children }) {
                 ))}
               </ul>
             ) : (
-              <p>No groups available</p>
+              <p className="no-data-message">
+                {selectedChild !== "All" 
+                  ? `${children.find(c => c.id === Number(selectedChild))?.name} hasn't joined any groups yet`
+                  : "No groups available"}
+              </p>
             )}
           </div>
         </div>
@@ -148,7 +228,7 @@ function ParentHome({ userData, onLogout, children }) {
             onClose={() => setIsChatOpen(false)}
             activeChatGroup={activeChatGroup}
             activeChatId={activeChatId}
-            groups={groups}
+            groups={currentGroups}
             onChangeChat={(group) => {
               setActiveChatId(group.name);
               setActiveChatGroup(group);
