@@ -2,6 +2,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.49.3",
     "react-router-dom": "^7.4.0",
+    "react-select": "^5.10.1",
     "supabase": "^2.20.5"
   }
 }

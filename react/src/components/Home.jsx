@@ -13,12 +13,23 @@ function Home({ userData, onLogout }) {
 	// Reminders
 	const [showAddReminderForm, setShowAddReminderForm] = useState(false);
 
-	// Mock data for groups
+	// Define group colors
+	const GROUP_COLORS = [
+		"#4ED1C4", // Teal
+		"#FFB347", // Orange 
+		"#6C63FF", // Purple
+		"#FF6B6B", // Red
+		"#FFD166", // Yellow
+		"#43AA8B", // Green
+		"#3A86FF", // Blue
+	];
+
+	// Mock data for groups with colors
 	const [groups, setGroups] = useState([
-		{ id: 1, name: "Youth Ministry", members: 24, role: "Member", description: "Weekly activities and events for our church youth.", meetingTime: "Sundays at 4 PM", location: "Fellowship Hall" },
-		{ id: 2, name: "Worship Team", members: 12, role: "Leader", description: "Music ministry team for Sunday services and special events.", meetingTime: "Thursdays at 7 PM", location: "Sanctuary" },
-		{ id: 3, name: "Bible Study", members: 18, role: "Member", description: "Weekly Bible study focusing on different books and themes.", meetingTime: "Wednesdays at 6:30 PM", location: "Room 201" },
-		{ id: 4, name: "Outreach Committee", members: 8, role: "Member", description: "Planning and coordinating community outreach events.", meetingTime: "First Monday of month at 6 PM", location: "Conference Room" },
+		{ id: 1, name: "Youth Ministry", members: 24, role: "Member", description: "Weekly activities and events for our church youth.", meetingTime: "Sundays at 4 PM", location: "Fellowship Hall", color: GROUP_COLORS[0] },
+		{ id: 2, name: "Worship Team", members: 12, role: "Leader", description: "Music ministry team for Sunday services and special events.", meetingTime: "Thursdays at 7 PM", location: "Sanctuary", color: GROUP_COLORS[1] },
+		{ id: 3, name: "Bible Study", members: 18, role: "Member", description: "Weekly Bible study focusing on different books and themes.", meetingTime: "Wednesdays at 6:30 PM", location: "Room 201", color: GROUP_COLORS[2] },
+		{ id: 4, name: "Outreach Committee", members: 8, role: "Member", description: "Planning and coordinating community outreach events.", meetingTime: "First Monday of month at 6 PM", location: "Conference Room", color: GROUP_COLORS[3] },
 	]);
 
 	// Chat state
@@ -70,7 +81,8 @@ function Home({ userData, onLogout }) {
 				role: "Member",
 				description: "Daily prayer meetings and prayer request coordination.",
 				meetingTime: "Tuesdays at 7 AM",
-				location: "Prayer Room"
+				location: "Prayer Room",
+				color: GROUP_COLORS[groups.length % GROUP_COLORS.length] // Assign next color in rotation
 			};
 			setGroups([...groups, newGroup]);
 			setShowJoinGroupModal(false);
@@ -192,7 +204,6 @@ function Home({ userData, onLogout }) {
 					<Calendar userData={userData} groups={groups}/>
 				</div>
 				
-
 				<div className="widget reminders-widget">
 					<div className="widget-header">
 						<h2>Reminders</h2>
@@ -232,7 +243,12 @@ function Home({ userData, onLogout }) {
 										className="group-item"
 										onClick={() => openGroupDetails(group)}
 									>
-										<div className="group-icon">{group.name.charAt(0)}</div>
+										<div 
+                                            className="group-icon"
+                                            style={{ backgroundColor: group.color }}
+                                        >
+                                            {group.name.charAt(0)}
+                                        </div>
 										<div className="group-details">
 											<h3>{group.name}</h3>
 											<p>
