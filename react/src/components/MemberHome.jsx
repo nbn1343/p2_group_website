@@ -295,7 +295,6 @@ function MemberHome({ userData, onLogout }) {
 								You haven't joined any groups yet
 							</p>
 						)}
-						<button className="view-all-btn">View All Groups</button>
 					</div>
 				</div>
 			</div>

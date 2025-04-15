@@ -23,7 +23,11 @@ function Calendar({ userData, groups, externalGroupFilter, setExternalGroupFilte
   const [newEventLocation, setNewEventLocation] = useState("");
   const [newEventGroups, setNewEventGroups] = useState([]);
 
-  const isLeader = userData?.role === "leader";
+  const role = userData?.user_metadata?.role; // "leader"
+const isLeader = role === "leader";
+
+  // Debugging: Log the user's role
+  console.log("User Role (from metadata):", userData?.raw_user_meta_data?.role);
 
   // Use group names from props for the select options
   const availableGroups = groups
