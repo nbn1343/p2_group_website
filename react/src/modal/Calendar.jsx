@@ -47,6 +47,16 @@ function Calendar({ userData, groups }) {
     return [groupsData];
   };
 
+  const isToday = (day) => {
+	const today = new Date();
+	return (
+	  !day.empty &&
+	  today.getFullYear() === currentDate.getFullYear() &&
+	  today.getMonth() === currentDate.getMonth() &&
+	  today.getDate() === day.day
+	);
+  };
+
   // Helper: get group color by name
   const getGroupColor = (groupName) => {
     const cleanName = groupName.replace(/[\[\]"']/g, '').trim();
@@ -598,37 +608,39 @@ function Calendar({ userData, groups }) {
               return (
                 <div
                   key={index}
-                  className={`calendar-day ${day.empty ? "empty" : ""}`}
+                  className={`calendar-day${day.empty ? " empty" : ""}${isToday(day) ? " today" : ""}`}
                   onClick={() => !day.empty && handleDayClick(day)}
                   style={{ position: "relative" }}
                 >
                   {day.day}
                   {!day.empty && dayGroups.length > 0 && (
-                    <div style={{ 
-                      display: "flex", 
-                      gap: 2, 
-                      position: "absolute", 
-                      bottom: 4,
-                      left: 0,
-                      right: 0,
-                      justifyContent: "center"
-                    }}>
-                      {dayGroups.map((groupName, dotIndex) => {
-                        const dotColor = getGroupColor(groupName);
-                        return (
-                          <span
-                            key={`${groupName}-${dotIndex}`}
-                            style={{
-                              width: "8px",
-                              height: "8px",
-                              borderRadius: "50%",
-                              backgroundColor: dotColor,
-                              display: "inline-block"
-                            }}
-                          />
-                        );
-                      })}
-                    </div>
+                    <div style={{
+						display: "flex",
+						gap: 6,
+						position: "absolute",
+						bottom: 8,
+						left: 0,
+						right: 0,
+						justifyContent: "center"
+					  }}>
+						{dayGroups.map((groupName, dotIndex) => {
+						  const dotColor = getGroupColor(groupName);
+						  return (
+							<span
+							  key={`${groupName}-${dotIndex}`}
+							  title={groupName}
+							  style={{
+								width: "12px",
+								height: "12px",
+								borderRadius: "50%",
+								backgroundColor: dotColor,
+								display: "inline-block",
+								border: "2px solid #222"
+							  }}
+							/>
+						  );
+						})}
+					  </div>
                   )}
                 </div>
               );
