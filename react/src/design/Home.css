@@ -1496,3 +1496,17 @@ input[type="time"] {
 	background-color: var(--teal);
 	color: white;
   }
+
+  .child-filter-dropdown {
+	background: var(--widget-bg);
+	color: var(--teal);
+	border: 1px solid var(--teal);
+	border-radius: 4px;
+	padding: 0.3em 0.8em;
+	font-size: 1rem;
+	margin-right: 1rem;
+}
+.child-filter-dropdown:focus {
+	outline: none;
+	border-color: #39b1a3;
+}

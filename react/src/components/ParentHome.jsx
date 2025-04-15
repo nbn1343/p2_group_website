@@ -6,9 +6,13 @@ import GroupModal from "../modal/GroupModal";
 import ChatModal from "../modal/ChatModal";
 import { supabase } from "../utils/supabase";
 
-function ParentHome({ userData, onLogout }) {
+function ParentHome({ userData, onLogout, children }) {
 	// User info
 	const firstName = userData?.user_metadata?.first_name || "User";
+
+	// --- CHILDREN FILTER STATE ---
+	const [selectedChildId, setSelectedChildId] = useState(children?.[0]?.id || null);
+	const selectedChild = children?.find(child => child.id === selectedChildId);
 
 	// Reminders
 	const [showAddReminderForm, setShowAddReminderForm] = useState(false);
@@ -172,6 +176,28 @@ function ParentHome({ userData, onLogout }) {
 				</div>
 				<div className="user-controls">
 					<span className="username">Welcome, {firstName}</span>
+					{/* --- CHILDREN FILTER DROPDOWN --- */}
+					{children && children.length > 0 && (
+						<select
+							className="child-filter-dropdown"
+							value={selectedChildId}
+							onChange={e => setSelectedChildId(Number(e.target.value))}
+							style={{
+								background: "var(--widget-bg)",
+								color: "var(--teal)",
+								border: "1px solid var(--teal)",
+								borderRadius: "4px",
+								padding: "0.3em 0.8em",
+								marginRight: "1rem"
+							}}
+						>
+							{children.map(child => (
+								<option key={child.id} value={child.id}>
+									{child.name}
+								</option>
+							))}
+						</select>
+					)}
 					{userData && (
 						<img
 							src="/profile-icon.png"
@@ -189,7 +215,7 @@ function ParentHome({ userData, onLogout }) {
 			<div className="widgets-container">
 				{/* Calendar Widget - Left */}
 				<div className="widget calendar-widget">
-					<Calendar userData={userData} />
+					<Calendar userData={userData} child={selectedChild} />
 				</div>
 
 				<div className="widget reminders-widget">
@@ -205,6 +231,7 @@ function ParentHome({ userData, onLogout }) {
 					<div className="widget-content">
 						<Reminders
 							userData={userData}
+							child={selectedChild}
 							showAddForm={showAddReminderForm}
 							onCloseAddReminder={() => setShowAddReminderForm(false)}
 						/>
@@ -251,7 +278,6 @@ function ParentHome({ userData, onLogout }) {
 					</div>
 				</div>
 			</div>
-
 			{/* Group Modal */}
 			{showJoinGroupModal && (
 				<GroupModal

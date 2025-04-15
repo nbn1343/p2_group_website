@@ -191,6 +191,7 @@ function Home({ userData, onLogout }) {
 				<div className="widget calendar-widget">
 					<Calendar userData={userData} groups={groups}/>
 				</div>
+				
 
 				<div className="widget reminders-widget">
 					<div className="widget-header">

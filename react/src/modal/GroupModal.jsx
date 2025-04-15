@@ -8,8 +8,6 @@ function GroupModal({
     joinError, 
     onJoinGroup 
 }) {
-
-    const groupColor = selectedGroup?.color || "#4ECDC4";
     // If selectedGroup exists, we show the group details view
     // Otherwise, we show the join group form
     return (

@@ -128,7 +128,17 @@ function App() {
 		} if (role === "member") {
 			return <MemberHome userData={userData} onLogout={handleLogout} />;
 		} if (role === "parent") {
-			return <ParentHome userData={userData} onLogout={handleLogout} />;
+			return <ParentHome
+			userData={userData}
+			onLogout={handleLogout}
+			children={[
+			  { id: 1, name: "Alice" },
+			  { id: 2, name: "Bob" },
+			  { id: 3, name: "Jimmy" },
+			  { id: 4, name: "John" }
+			]}
+		  />
+		  ;
 		} if (role === "youth") {
 			return <YouthHome userData={userData} onLogout={handleLogout} />;
 		}

@@ -7,13 +7,10 @@ import ChatModal from "../modal/ChatModal";
 import { supabase } from "../utils/supabase";
 
 function YouthHome({ userData, onLogout }) {
-	// User info
 	const firstName = userData?.user_metadata?.first_name || "User";
 
-	// Reminders
 	const [showAddReminderForm, setShowAddReminderForm] = useState(false);
 
-	// Mock data for groups
 	const [groups, setGroups] = useState([
 		{ id: 1, name: "Youth Ministry", members: 24, role: "Member", description: "Weekly activities and events for our church youth.", meetingTime: "Sundays at 4 PM", location: "Fellowship Hall" },
 		{ id: 2, name: "Worship Team", members: 12, role: "Leader", description: "Music ministry team for Sunday services and special events.", meetingTime: "Thursdays at 7 PM", location: "Sanctuary" },
@@ -21,17 +18,14 @@ function YouthHome({ userData, onLogout }) {
 		{ id: 4, name: "Outreach Committee", members: 8, role: "Member", description: "Planning and coordinating community outreach events.", meetingTime: "First Monday of month at 6 PM", location: "Conference Room" },
 	]);
 
-	// Chat state
 	const [isChatOpen, setIsChatOpen] = useState(false);
 	const [activeChatId, setActiveChatId] = useState(null);
 
-	// Group modal states
 	const [showJoinGroupModal, setShowJoinGroupModal] = useState(false);
 	const [selectedGroup, setSelectedGroup] = useState(null);
 	const [joinCode, setJoinCode] = useState("");
 	const [joinError, setJoinError] = useState("");
 
-	// Profile edit states
 	const [editProfile, setEditProfile] = useState(false);
 	const [name, setName] = useState(userData.user_metadata?.first_name || '');
 	const [email, setEmail] = useState(userData.user_metadata?.email || '');
@@ -39,7 +33,9 @@ function YouthHome({ userData, onLogout }) {
 	const [role, setRole] = useState(userData.user_metadata?.role || '');
 	const [profileImage, setProfileImage] = useState(null);
 
-	// Open join group modal
+	// NEW: Calendar add event state
+	const [showAddEventForm, setShowAddEventForm] = useState(false);
+
 	const openJoinGroupModal = () => {
 		setSelectedGroup(null);
 		setJoinCode("");
@@ -47,7 +43,6 @@ function YouthHome({ userData, onLogout }) {
 		setShowJoinGroupModal(true);
 	};
 
-	// Open group details modal
 	const openGroupDetails = (group) => {
 		setSelectedGroup(group);
 		setJoinCode("");
@@ -55,13 +50,11 @@ function YouthHome({ userData, onLogout }) {
 		setShowJoinGroupModal(true);
 	};
 
-	// Handle joining a group with a code
 	const handleJoinGroup = () => {
 		if (!joinCode.trim()) {
 			setJoinError("Please enter a valid join code");
 			return;
 		}
-		// Mock functionality
 		if (joinCode === "DEMO123") {
 			const newGroup = {
 				id: groups.length + 1,
@@ -81,14 +74,12 @@ function YouthHome({ userData, onLogout }) {
 		}
 	};
 
-	// Handle profile image change
 	const handleImageChange = (event) => {
 		if (event.target.files && event.target.files[0]) {
 			setProfileImage(URL.createObjectURL(event.target.files[0]));
 		}
 	};
 
-	// Save profile changes
 	const handleSaveProfile = async () => {
 		const { error } = await supabase.auth.updateUser({
 			data: {
@@ -104,13 +95,11 @@ function YouthHome({ userData, onLogout }) {
 		}
 	};
 
-	// Open chat with specific person/group
 	const openChat = (chatId) => {
 		setActiveChatId(chatId);
 		setIsChatOpen(true);
 	};
 
-	// --- PROFILE EDIT SECTION WITH EXIT BUTTON ---
 	if (editProfile) {
 		return (
 			<div className="profile-edit">
@@ -189,18 +178,17 @@ function YouthHome({ userData, onLogout }) {
 			<div className="widgets-container">
 				{/* Calendar Widget - Left */}
 				<div className="widget calendar-widget">
-					<Calendar userData={userData} />
+					<Calendar
+						userData={userData}
+						groups={groups}
+						showAddEventForm={showAddEventForm}
+						setShowAddEventForm={setShowAddEventForm}
+					/>
 				</div>
 
 				<div className="widget reminders-widget">
 					<div className="widget-header">
 						<h2>Reminders</h2>
-						<button
-							className="widget-action-btn"
-							onClick={() => setShowAddReminderForm(true)}
-						>
-							+ Add
-						</button>
 					</div>
 					<div className="widget-content">
 						<Reminders
@@ -251,7 +239,6 @@ function YouthHome({ userData, onLogout }) {
 					</div>
 				</div>
 			</div>
-
 			{/* Group Modal */}
 			{showJoinGroupModal && (
 				<GroupModal
