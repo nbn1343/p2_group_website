@@ -18,8 +18,7 @@ function ParentHome({ userData, onLogout, children }) {
   const [activeChatId, setActiveChatId] = useState(null);
   const [activeChatGroup, setActiveChatGroup] = useState(null);
 
-  const [currentEvents, setCurrentEvents] = useState(calendarConfigurations.all);
-
+  
 
   // Group configuration
   const GROUP_COLORS = [
