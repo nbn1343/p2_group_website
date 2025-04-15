@@ -72,13 +72,15 @@ function Register({ onClose, onSwitchToLogin, onRegister }) {
 					},
 				},
 			});
-
+	
 			if (error) {
 				console.error("Error signing up:", error.message);
 				setRegisterError("Registration failed: " + error.message);
 			} else {
-				console.log("Registration successful:", data);
-				onRegister(formData);
+				// Fetch the user object after registration
+				const { data: userData } = await supabase.auth.getUser();
+				console.log("Registration successful:", userData);
+				onRegister(userData.user); // Pass the user object, not just formData
 			}
 		}
 	};
