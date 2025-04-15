@@ -6,7 +6,9 @@ function GroupModal({
     joinCode, 
     setJoinCode, 
     joinError, 
-    onJoinGroup 
+    onJoinGroup,
+    onMessageGroup,
+    onViewCalendar
 }) {
     // If selectedGroup exists, we show the group details view
     // Otherwise, we show the join group form
@@ -72,10 +74,16 @@ function GroupModal({
                             <button 
                                 className="primary-btn"
                                 style={{ backgroundColor: selectedGroup.color }}
+                                onClick={() => onMessageGroup(selectedGroup)}
                             >
                                 Message Group
                             </button>
-                            <button className="secondary-btn">View Calendar</button>
+                            <button 
+                                className="secondary-btn"
+                                onClick={() => onViewCalendar(selectedGroup)}
+                            >
+                                View Calendar
+                            </button>
                         </div>
                     </div>
                 ) : (

@@ -1,18 +1,20 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabase";
 
-function Calendar({ userData, groups }) {
+function Calendar({ userData, groups, externalGroupFilter, setExternalGroupFilter, externalCalendarView, setExternalCalendarView }) {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [calendarDays, setCalendarDays] = useState([]);
-  const [calendarView, setCalendarView] = useState("calendar");
   const [showAddEventForm, setShowAddEventForm] = useState(false);
   const [selectedDay, setSelectedDay] = useState(null);
   const [validationError, setValidationError] = useState("");
   const [supabaseError, setSupabaseError] = useState("");
-  const [activeGroupFilters, setActiveGroupFilters] = useState([]);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+
+  // Use external filter/view if provided, otherwise use local state
+  const [activeGroupFilters, setActiveGroupFilters] = useState(externalGroupFilter || []);
+  const [calendarView, setCalendarView] = useState(externalCalendarView || "calendar");
 
   // Event form state
   const [newEventTitle, setNewEventTitle] = useState("");
@@ -32,6 +34,20 @@ function Calendar({ userData, groups }) {
 
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+  // Sync with external filters when they change
+  useEffect(() => {
+    if (externalGroupFilter !== undefined) {
+      setActiveGroupFilters(externalGroupFilter);
+    }
+  }, [externalGroupFilter]);
+
+  // Sync with external view when it changes
+  useEffect(() => {
+    if (externalCalendarView !== undefined) {
+      setCalendarView(externalCalendarView);
+    }
+  }, [externalCalendarView]);
+
   // Helper: parse groups properly from Supabase
   const parseGroups = (groupsData) => {
     if (!groupsData) return [];
@@ -48,13 +64,13 @@ function Calendar({ userData, groups }) {
   };
 
   const isToday = (day) => {
-	const today = new Date();
-	return (
-	  !day.empty &&
-	  today.getFullYear() === currentDate.getFullYear() &&
-	  today.getMonth() === currentDate.getMonth() &&
-	  today.getDate() === day.day
-	);
+    const today = new Date();
+    return (
+      !day.empty &&
+      today.getFullYear() === currentDate.getFullYear() &&
+      today.getMonth() === currentDate.getMonth() &&
+      today.getDate() === day.day
+    );
   };
 
   // Helper: get group color by name
@@ -173,7 +189,7 @@ function Calendar({ userData, groups }) {
   const handleDayClick = (day) => {
     if (day.empty) return;
     setSelectedDay(day.date);
-    setCalendarView("events");
+    handleSetCalendarView("events");
   };
 
   // Add a new event
@@ -273,16 +289,38 @@ function Calendar({ userData, groups }) {
     return new Date(year, month - 1, day).toLocaleDateString();
   };
 
+  // Updated to also update external state
   const toggleGroupFilter = (groupName) => {
+    let newFilters;
     if (activeGroupFilters.includes(groupName)) {
-      setActiveGroupFilters(activeGroupFilters.filter(g => g !== groupName));
+      newFilters = activeGroupFilters.filter(g => g !== groupName);
     } else {
-      setActiveGroupFilters([...activeGroupFilters, groupName]);
+      newFilters = [...activeGroupFilters, groupName];
+    }
+    
+    setActiveGroupFilters(newFilters);
+    
+    // Update external state if provided
+    if (setExternalGroupFilter) {
+      setExternalGroupFilter(newFilters);
+    }
+  };
+
+  // Updated to also update external state
+  const handleSetCalendarView = (view) => {
+    setCalendarView(view);
+    
+    // Update external state if provided
+    if (setExternalCalendarView) {
+      setExternalCalendarView(view);
     }
   };
 
   const clearFilters = () => {
     setActiveGroupFilters([]);
+    if (setExternalGroupFilter) {
+      setExternalGroupFilter([]);
+    }
     setShowFilterDropdown(false);
   };
 
@@ -435,14 +473,14 @@ function Calendar({ userData, groups }) {
         <div className="calendar-view-toggle">
           <button
             className={`view-toggle-btn ${calendarView === "events" ? "active" : ""}`}
-            onClick={() => setCalendarView("events")}
+            onClick={() => handleSetCalendarView("events")}
           >
             Events
           </button>
           <button
             className={`view-toggle-btn ${calendarView === "calendar" ? "active" : ""}`}
             onClick={() => {
-              setCalendarView("calendar");
+              handleSetCalendarView("calendar");
               setSelectedDay(null);
             }}
           >
@@ -615,32 +653,32 @@ function Calendar({ userData, groups }) {
                   {day.day}
                   {!day.empty && dayGroups.length > 0 && (
                     <div style={{
-						display: "flex",
-						gap: 6,
-						position: "absolute",
-						bottom: 8,
-						left: 0,
-						right: 0,
-						justifyContent: "center"
-					  }}>
-						{dayGroups.map((groupName, dotIndex) => {
-						  const dotColor = getGroupColor(groupName);
-						  return (
-							<span
-							  key={`${groupName}-${dotIndex}`}
-							  title={groupName}
-							  style={{
-								width: "12px",
-								height: "12px",
-								borderRadius: "50%",
-								backgroundColor: dotColor,
-								display: "inline-block",
-								border: "2px solid #222"
-							  }}
-							/>
-						  );
-						})}
-					  </div>
+                      display: "flex",
+                      gap: 6,
+                      position: "absolute",
+                      bottom: 8,
+                      left: 0,
+                      right: 0,
+                      justifyContent: "center"
+                    }}>
+                      {dayGroups.map((groupName, dotIndex) => {
+                        const dotColor = getGroupColor(groupName);
+                        return (
+                          <span
+                            key={`${groupName}-${dotIndex}`}
+                            title={groupName}
+                            style={{
+                              width: "12px",
+                              height: "12px",
+                              borderRadius: "50%",
+                              backgroundColor: dotColor,
+                              display: "inline-block",
+                              border: "2px solid #222"
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
                   )}
                 </div>
               );

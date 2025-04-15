@@ -15,10 +15,10 @@ function Home({ userData, onLogout }) {
 
 	// Define group colors
 	const GROUP_COLORS = [
-		"#4ED1C4", // Teal
-		"#FFB347", // Orange 
-		"#6C63FF", // Purple
-		"#FF6B6B", // Red
+		"#4ED1C4", // Teal (Youth Ministry)
+		"#FFB347", // Orange (Worship Team)
+		"#6C63FF", // Purple (Bible Study)
+		"#FF6B6B", // Red (Outreach Committee)
 		"#FFD166", // Yellow
 		"#43AA8B", // Green
 		"#3A86FF", // Blue
@@ -32,9 +32,14 @@ function Home({ userData, onLogout }) {
 		{ id: 4, name: "Outreach Committee", members: 8, role: "Member", description: "Planning and coordinating community outreach events.", meetingTime: "First Monday of month at 6 PM", location: "Conference Room", color: GROUP_COLORS[3] },
 	]);
 
+	// Calendar filter and view state
+	const [calendarGroupFilter, setCalendarGroupFilter] = useState([]);
+	const [calendarView, setCalendarView] = useState("calendar");
+
 	// Chat state
 	const [isChatOpen, setIsChatOpen] = useState(false);
 	const [activeChatId, setActiveChatId] = useState(null);
+	const [activeChatGroup, setActiveChatGroup] = useState(null);
 
 	// Group modal states
 	const [showJoinGroupModal, setShowJoinGroupModal] = useState(false);
@@ -44,10 +49,10 @@ function Home({ userData, onLogout }) {
 
 	// Profile edit states
 	const [editProfile, setEditProfile] = useState(false);
-	const [name, setName] = useState(userData.user_metadata?.first_name || '');
-	const [email, setEmail] = useState(userData.user_metadata?.email || '');
-	const [phone, setPhone] = useState(userData.user_metadata?.phone || '');
-	const [role, setRole] = useState(userData.user_metadata?.role || '');
+	const [name, setName] = useState(userData?.user_metadata?.first_name || '');
+	const [email, setEmail] = useState(userData?.user_metadata?.email || '');
+	const [phone, setPhone] = useState(userData?.user_metadata?.phone || '');
+	const [role, setRole] = useState(userData?.user_metadata?.role || '');
 	const [profileImage, setProfileImage] = useState(null);
 
 	// Open join group modal
@@ -116,9 +121,28 @@ function Home({ userData, onLogout }) {
 		}
 	};
 
-	// Open chat with specific person/group
-	const openChat = (chatId) => {
-		setActiveChatId(chatId);
+	// Open chat with specific group
+	const handleMessageGroup = (group) => {
+		setActiveChatId(group.name);
+		setActiveChatGroup(group);
+		setIsChatOpen(true);
+		setShowJoinGroupModal(false);
+	};
+
+	// Handler for "View Calendar" button in group modal
+	const handleViewCalendar = (group) => {
+		setCalendarGroupFilter([group.name]);
+		setCalendarView("calendar");
+		setShowJoinGroupModal(false);
+	};
+
+	// Open chat icon clicked
+	const openGeneralChat = () => {
+		// If no chat is active, open the first group by default
+		if (!activeChatGroup) {
+			setActiveChatId(groups[0].name);
+			setActiveChatGroup(groups[0]);
+		}
 		setIsChatOpen(true);
 	};
 
@@ -201,7 +225,14 @@ function Home({ userData, onLogout }) {
 			<div className="widgets-container">
 				{/* Calendar Widget - Left */}
 				<div className="widget calendar-widget">
-					<Calendar userData={userData} groups={groups}/>
+					<Calendar 
+						userData={userData} 
+						groups={groups}
+						externalGroupFilter={calendarGroupFilter}
+						setExternalGroupFilter={setCalendarGroupFilter}
+						externalCalendarView={calendarView}
+						setExternalCalendarView={setCalendarView}
+					/>
 				</div>
 				
 				<div className="widget reminders-widget">
@@ -278,11 +309,13 @@ function Home({ userData, onLogout }) {
 					setJoinCode={setJoinCode}
 					joinError={joinError}
 					onJoinGroup={handleJoinGroup}
+					onMessageGroup={handleMessageGroup}
+					onViewCalendar={handleViewCalendar}
 				/>
 			)}
 
 			{/* Chat Icon */}
-			<div className="chat-icon" onClick={() => setIsChatOpen(!isChatOpen)}>
+			<div className="chat-icon" onClick={openGeneralChat}>
 				<img
 					src="/message-icon.png"
 					alt="Messages"
@@ -294,7 +327,13 @@ function Home({ userData, onLogout }) {
 			{isChatOpen && (
 				<ChatModal
 					onClose={() => setIsChatOpen(false)}
+					activeChatGroup={activeChatGroup}
 					activeChatId={activeChatId}
+					groups={groups}
+					onChangeChat={(group) => {
+						setActiveChatId(group.name);
+						setActiveChatGroup(group);
+					}}
 				/>
 			)}
 		</div>
