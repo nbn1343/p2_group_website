@@ -189,7 +189,7 @@ function Home({ userData, onLogout }) {
 			<div className="widgets-container">
 				{/* Calendar Widget - Left */}
 				<div className="widget calendar-widget">
-					<Calendar userData={userData} />
+					<Calendar userData={userData} groups={groups}/>
 				</div>
 
 				<div className="widget reminders-widget">

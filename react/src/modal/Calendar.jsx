@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabase";
 
-function Calendar({ userData }) {
+function Calendar({ userData, groups }) {
 	const [events, setEvents] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [currentDate, setCurrentDate] = useState(new Date());
@@ -11,12 +11,24 @@ function Calendar({ userData }) {
 	const [selectedDay, setSelectedDay] = useState(null);
 	const [validationError, setValidationError] = useState("");
 	const [supabaseError, setSupabaseError] = useState("");
+	// Add filter state
+	const [activeGroupFilters, setActiveGroupFilters] = useState([]);
+	const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
 	// Event form state
 	const [newEventTitle, setNewEventTitle] = useState("");
 	const [newEventDate, setNewEventDate] = useState("");
 	const [newEventTime, setNewEventTime] = useState("");
 	const [newEventLocation, setNewEventLocation] = useState("");
+	const [newEventGroups, setNewEventGroups] = useState([]);
+
+	// Use group names from props for the select options
+	const availableGroups = groups
+		? groups.map(group => ({
+			value: group.name,
+			label: group.name
+		}))
+		: [];
 
 	const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -62,17 +74,23 @@ function Calendar({ userData }) {
 			days.push({ day: "", empty: true });
 		}
 
+		// Filter events based on active group filters
+		const filteredEventsByGroup = activeGroupFilters.length > 0
+			? events.filter(event => {
+				// If event.groups is a string, convert to array
+				const eventGroups = Array.isArray(event.groups) ? event.groups : [event.groups];
+				// Check if any of the event's groups match the active filters
+				return eventGroups.some(group => activeGroupFilters.includes(group));
+			})
+			: events;
+
 		// Add days of the month with event check
 		for (let i = 1; i <= daysInMonth; i++) {
-			// Create date without timezone conversion
 			const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-
-			// Check if there are events on this day
-			const hasEvent = events.some((event) => {
+			const hasEvent = filteredEventsByGroup.some((event) => {
 				const eventDateString = event.date.split('T')[0];
 				return eventDateString === dateString;
 			});
-
 			days.push({
 				day: i,
 				date: dateString,
@@ -82,45 +100,63 @@ function Calendar({ userData }) {
 		}
 
 		setCalendarDays(days);
-	}, [currentDate, events]);
+	}, [currentDate, events, activeGroupFilters]);
 
-	// Filter events for the current month
+	// Filter events for the current month and by group
 	const filteredEvents = events.filter((event) => {
 		if (!event.date) return false;
 		
 		const eventDateParts = event.date.split('T')[0].split('-');
 		const eventYear = parseInt(eventDateParts[0]);
-		const eventMonth = parseInt(eventDateParts[1]) - 1; // JS months are 0-indexed
+		const eventMonth = parseInt(eventDateParts[1]) - 1;
 		
-		return (
-			eventMonth === currentDate.getMonth() &&
-			eventYear === currentDate.getFullYear()
-		);
+		// First filter by date
+		const dateMatches = eventMonth === currentDate.getMonth() && eventYear === currentDate.getFullYear();
+		
+		// If group filters are active, also filter by group
+		if (activeGroupFilters.length > 0) {
+			const eventGroups = Array.isArray(event.groups) ? event.groups : [event.groups];
+			return dateMatches && eventGroups.some(group => activeGroupFilters.includes(group));
+		}
+		
+		return dateMatches;
 	});
 
-	// Filter events for a specific day - FIXED FUNCTION
+	// Filter events for a specific day and by group
 	const getDayEvents = (dateString) => {
 		return events.filter((event) => {
 			if (!event.date) return false;
-			// Compare the date strings directly
+			
 			const eventDateString = event.date.split('T')[0];
-			return eventDateString === dateString;
+			const dateMatches = eventDateString === dateString;
+			
+			// If group filters are active, also filter by group
+			if (activeGroupFilters.length > 0) {
+				const eventGroups = Array.isArray(event.groups) ? event.groups : [event.groups];
+				return dateMatches && eventGroups.some(group => activeGroupFilters.includes(group));
+			}
+			
+			return dateMatches;
 		});
 	};
 
-	// Handle day click to show that day's events
 	const handleDayClick = (day) => {
 		if (day.empty) return;
-
 		setSelectedDay(day.date);
 		setCalendarView("events");
 	};
 
-	// Add a new event - FIXED TO PREVENT TIMEZONE ISSUES
+	// Add a new event
 	const addEvent = async (e) => {
 		e.preventDefault();
 
-		if (!newEventTitle || !newEventDate || !newEventTime || !newEventLocation) {
+		if (
+			!newEventTitle ||
+			!newEventDate ||
+			!newEventTime ||
+			!newEventLocation ||
+			newEventGroups.length === 0
+		) {
 			setValidationError("Please fill out all fields.");
 			return;
 		}
@@ -128,14 +164,19 @@ function Calendar({ userData }) {
 		setValidationError("");
 		setSupabaseError("");
 
-		// Use the date input value directly without creating a Date object
+		// If "all" is selected, use all available groups
+		const groupsToSave = newEventGroups.includes("all")
+			? availableGroups.map(g => g.value)
+			: newEventGroups;
+
 		const { error } = await supabase.from("events").insert([
 			{
 				title: newEventTitle,
-				date: newEventDate, // Use the string directly
+				date: newEventDate,
 				time: newEventTime,
 				location: newEventLocation,
 				user_id: userData.id,
+				groups: groupsToSave, // Store as array (recommended)
 			},
 		]);
 
@@ -148,12 +189,9 @@ function Calendar({ userData }) {
 		}
 	};
 
-	// Update an event
 	const updateEvent = async (event, field, value) => {
 		setSupabaseError("");
-
 		const updatedEvent = { ...event, [field]: value };
-
 		const { error } = await supabase
 			.from("events")
 			.update(updatedEvent)
@@ -166,10 +204,8 @@ function Calendar({ userData }) {
 		}
 	};
 
-	// Delete an event
 	const deleteEvent = async (id) => {
 		setSupabaseError("");
-
 		const { error } = await supabase
 			.from("events")
 			.delete()
@@ -182,16 +218,15 @@ function Calendar({ userData }) {
 		}
 	};
 
-	// Reset the event form
 	const resetEventForm = () => {
 		setNewEventTitle("");
 		setNewEventDate("");
 		setNewEventTime("");
 		setNewEventLocation("");
+		setNewEventGroups([]);
 		setValidationError("");
 	};
 
-	// Calendar navigation
 	const prevMonth = () => {
 		setCurrentDate(
 			new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
@@ -204,16 +239,30 @@ function Calendar({ userData }) {
 		);
 	};
 
-	// Format date for display
 	const formatDate = (dateString) => {
-		// Split the date string and create a date without timezone conversion
 		const [year, month, day] = dateString.split('-');
 		return new Date(year, month - 1, day).toLocaleDateString();
 	};
 
+	// Toggle group filter
+	const toggleGroupFilter = (groupName) => {
+		if (activeGroupFilters.includes(groupName)) {
+			// Remove the group filter
+			setActiveGroupFilters(activeGroupFilters.filter(g => g !== groupName));
+		} else {
+			// Add the group filter
+			setActiveGroupFilters([...activeGroupFilters, groupName]);
+		}
+	};
+
+	// Clear all filters
+	const clearFilters = () => {
+		setActiveGroupFilters([]);
+		setShowFilterDropdown(false);
+	};
+
 	if (loading) return <div>Loading calendar...</div>;
 
-	// Calculate which events to show based on calendarView and selectedDay
 	let eventsToShow = filteredEvents;
 	if (calendarView === "events" && selectedDay) {
 		eventsToShow = getDayEvents(selectedDay);
@@ -260,9 +309,34 @@ function Calendar({ userData }) {
 								value={newEventLocation}
 								onChange={(e) => setNewEventLocation(e.target.value)}
 							/>
+							{/* Multi-select for groups */}
+							<select
+								multiple
+								value={newEventGroups}
+								onChange={e => {
+									const selected = Array.from(e.target.selectedOptions, option => option.value);
+									if (selected.includes("all")) {
+										setNewEventGroups(["all", ...availableGroups.map(g => g.value)]);
+									} else {
+										setNewEventGroups(selected);
+									}
+								}}
+								style={{ minHeight: "80px", marginBottom: "1rem" }}
+							>
+								<option value="all">All Groups</option>
+								{availableGroups.map(group => (
+									<option key={group.value} value={group.value}>{group.label}</option>
+								))}
+							</select>
 							<button
 								type="submit"
-								disabled={!newEventTitle || !newEventDate || !newEventTime || !newEventLocation}
+								disabled={
+									!newEventTitle ||
+									!newEventDate ||
+									!newEventTime ||
+									!newEventLocation ||
+									newEventGroups.length === 0
+								}
 							>
 								Add Event
 							</button>
@@ -270,7 +344,6 @@ function Calendar({ userData }) {
 					</div>
 				</div>
 			)}
-
 			{/* ───── CALENDAR HEADER ───── */}
 			<div className="widget-header">
 				<h2>Calendar</h2>
@@ -286,15 +359,13 @@ function Calendar({ userData }) {
 				</div>
 				<div className="calendar-view-toggle">
 					<button
-						className={`view-toggle-btn ${calendarView === "events" ? "active" : ""
-							}`}
+						className={`view-toggle-btn ${calendarView === "events" ? "active" : ""}`}
 						onClick={() => setCalendarView("events")}
 					>
 						Events
 					</button>
 					<button
-						className={`view-toggle-btn ${calendarView === "calendar" ? "active" : ""
-							}`}
+						className={`view-toggle-btn ${calendarView === "calendar" ? "active" : ""}`}
 						onClick={() => {
 							setCalendarView("calendar");
 							setSelectedDay(null);
@@ -302,6 +373,40 @@ function Calendar({ userData }) {
 					>
 						Calendar
 					</button>
+					{/* Filter Button */}
+					<div className="filter-dropdown-container">
+						<button
+							className={`widget-action-btn ${activeGroupFilters.length > 0 ? "active" : ""}`}
+							onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+							style={{ marginLeft: "8px" }}
+						>
+							Filter {activeGroupFilters.length > 0 ? `(${activeGroupFilters.length})` : ""}
+						</button>
+						{/* Filter Dropdown */}
+						{showFilterDropdown && (
+							<div className="filter-dropdown">
+								<div className="filter-header">
+									<h3>Filter by Group</h3>
+									<button onClick={clearFilters} className="clear-filters">Clear All</button>
+								</div>
+								<div className="filter-options">
+									{availableGroups.map(group => (
+										<div key={group.value} className="filter-option">
+											<label>
+												<input
+													type="checkbox"
+													checked={activeGroupFilters.includes(group.value)}
+													onChange={() => toggleGroupFilter(group.value)}
+												/>
+												{group.label}
+											</label>
+										</div>
+									))}
+								</div>
+							</div>
+						)}
+					</div>
+					{/* Add Button */}
 					<button
 						className="widget-action-btn"
 						onClick={() => setShowAddEventForm(true)}
@@ -314,6 +419,19 @@ function Calendar({ userData }) {
 
 			{/* ───── CALENDAR CONTENT ───── */}
 			<div className="widget-content">
+				{/* Active Filters Display */}
+				{activeGroupFilters.length > 0 && (
+					<div className="active-filters">
+						<span>Filtered by: </span>
+						{activeGroupFilters.map(filter => (
+							<div key={filter} className="filter-tag">
+								{filter}
+								<button onClick={() => toggleGroupFilter(filter)} className="remove-filter">×</button>
+							</div>
+						))}
+					</div>
+				)}
+				
 				{calendarView === "events" ? (
 					<div>
 						{selectedDay && (
@@ -336,8 +454,8 @@ function Calendar({ userData }) {
 												{event.date ? event.date.split('T')[0].split('-')[2] : ''}
 											</span>
 											<span className="event-month">
-												{event.date ? 
-													new Date(0, parseInt(event.date.split('T')[0].split('-')[1]) - 1).toLocaleString("default", { month: "short" }) : 
+												{event.date ?
+													new Date(0, parseInt(event.date.split('T')[0].split('-')[1]) - 1).toLocaleString("default", { month: "short" }) :
 													''
 												}
 											</span>
@@ -364,6 +482,10 @@ function Calendar({ userData }) {
 													onChange={(e) => updateEvent(event, "location", e.target.value)}
 												/>
 											</div>
+											{/* Show groups */}
+											<div className="event-groups">
+												Groups: {Array.isArray(event.groups) ? event.groups.join(", ") : event.groups}
+											</div>
 										</div>
 										<button
 											onClick={() => deleteEvent(event.id)}
@@ -377,7 +499,9 @@ function Calendar({ userData }) {
 								<p className="no-data-message">
 									{selectedDay
 										? "No events scheduled for this day"
-										: "No events this month"}
+										: activeGroupFilters.length > 0
+											? "No events match the selected group filters"
+											: "No events this month"}
 								</p>
 							)}
 						</ul>
@@ -392,8 +516,7 @@ function Calendar({ userData }) {
 						{calendarDays.map((day, index) => (
 							<div
 								key={index}
-								className={`calendar-day ${day.empty ? "empty" : ""} ${day.hasEvent ? "has-event" : ""
-									}`}
+								className={`calendar-day ${day.empty ? "empty" : ""} ${day.hasEvent ? "has-event" : ""}`}
 								onClick={() => !day.empty && handleDayClick(day)}
 							>
 								{day.day}
