@@ -1645,3 +1645,49 @@ input[type="time"] {
 	box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
   
+  .dashboard-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1rem 2rem;
+	background-color: var(--primary-dark);
+	color: var(--text-light);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .header-left {
+	display: flex;
+	align-items: center;
+	gap: 2rem;
+  }
+  
+  .child-filter {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	background: rgba(255,255,255,0.04);
+	padding: 0.3em 0.8em;
+	border-radius: 6px;
+  }
+  
+  .child-filter-label {
+	color: var(--teal);
+	font-weight: 500;
+	font-size: 1rem;
+  }
+  
+  .child-filter-dropdown {
+	background: var(--widget-bg);
+	color: var(--teal);
+	border: 1px solid var(--teal);
+	border-radius: 4px;
+	padding: 0.3em 0.8em;
+	font-size: 1rem;
+	transition: border-color 0.2s;
+  }
+  
+  .child-filter-dropdown:focus {
+	outline: none;
+	border-color: #39b1a3;
+  }
+  
