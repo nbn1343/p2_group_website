@@ -165,33 +165,38 @@ function Reminders({ showAddForm, onCloseAddReminder, userData }) {
 				<p className="no-data-message">Add a reminder</p>
 			) : (
 				<ul className="reminders-list">
-					{incompleteReminders.map((reminder) => (
-						<li
-							key={reminder.id}
-							className={`reminder-item ${
-								reminder.completed ? "completed" : ""
-							}`}
-						>
-							<input
-								type="checkbox"
-								checked={reminder.completed}
-								onChange={() => toggleComplete(reminder)}
-							/>
-							<div className="reminder-details">
-								<input
-									type="text"
-									value={reminder.text}
-									onChange={(e) => updateReminderText(reminder, e.target.value)}
-									className="reminder-text-input"
-								/>
-								<p>Due: {new Date(reminder.due_date).toLocaleDateString()}</p>
-							</div>
-							<button onClick={() => deleteReminder(reminder.id)}>
-								Delete
-							</button>
-						</li>
-					))}
-				</ul>
+  {incompleteReminders.map((reminder) => (
+    <li
+      key={reminder.id}
+      className={`reminder-item-card${reminder.completed ? " completed" : ""}`}
+    >
+      <div className="reminder-main">
+        <input
+          type="checkbox"
+          checked={reminder.completed}
+          onChange={() => toggleComplete(reminder)}
+        />
+        <div className="reminder-details">
+          <input
+            type="text"
+            value={reminder.text}
+            onChange={(e) => updateReminderText(reminder, e.target.value)}
+            className="reminder-text-input"
+            disabled={reminder.completed}
+          />
+          <span className="reminder-date">
+            <i className="fa fa-calendar" style={{ marginRight: 4 }} />
+            {new Date(reminder.due_date).toLocaleDateString()}
+          </span>
+        </div>
+      </div>
+      <button className="reminder-delete-btn" onClick={() => deleteReminder(reminder.id)}>
+        <i className="fa fa-trash" />
+      </button>
+    </li>
+  ))}
+</ul>
+
 			)}
 
 			{/* ───── Completed Reminders (Collapsible) ───── */}

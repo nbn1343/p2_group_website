@@ -363,8 +363,99 @@ background: rgba(78, 205, 196, 0.12);
 	list-style: none;
 	padding: 0;
 	margin: 0;
-	flex: 1;
 }
+
+.reminder-item-card {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: rgba(255,255,255,0.04);
+	border-radius: 10px;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+	margin-bottom: 1rem;
+	padding: 0.8rem 1.2rem;
+	border-left: 5px solid var(--teal);
+	transition: box-shadow 0.2s, background 0.2s;
+	position: relative;
+  }
+  
+  .reminder-item-card.completed {
+	opacity: 0.6;
+	text-decoration: line-through;
+	background: rgba(255,255,255,0.02);
+  }
+
+  .reminder-main {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	flex: 1;
+  }
+  
+  .reminder-details {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+  }
+  
+  .reminder-text-input {
+	background: transparent;
+	border: none;
+	color: #fff;
+	font-size: 1rem;
+	font-weight: 500;
+	width: 100%;
+	outline: none;
+	transition: color 0.2s;
+  }
+  
+  .reminder-item-card.completed .reminder-text-input {
+	color: #aaa;
+	font-style: italic;
+  }
+  
+  .reminder-date {
+	font-size: 0.85rem;
+	color: var(--teal);
+	margin-top: 2px;
+	display: flex;
+	align-items: center;
+  }
+  
+  .reminder-delete-btn {
+	background: none;
+	border: none;
+	color: #e74c3c;
+	font-size: 1.2rem;
+	cursor: pointer;
+	margin-left: 0.5rem;
+	transition: color 0.2s;
+  }
+  
+  .reminder-delete-btn:hover {
+	color: #fff;
+  }
+  
+  .toggle-completed-btn {
+	background: none;
+	border: none;
+	color: var(--teal);
+	font-size: 1rem;
+	cursor: pointer;
+	margin-top: 1rem;
+	margin-bottom: 0.5rem;
+	font-weight: 500;
+  }
+  
+  .completed-section {
+	margin-top: 2rem;
+  }
+  
+  .reminders-list.completed .reminder-item-card {
+	opacity: 0.5;
+	background: rgba(255,255,255,0.01);
+	border-left: 5px solid #888;
+  }
 
 .reminder-item {
 	display: flex;
@@ -1286,11 +1377,11 @@ input[type="time"] {
 }
 
 .profile-icon {
-    width: 30px; /* Adjust size as needed */
-    height: 30px; /* Adjust size as needed */
-    cursor: pointer; /* Indicates the icon is clickable */
-    transition: transform 0.3s ease; /* Smooth transform effect on hover */
-	background: none; /* Ensure there's no background color applied */
+    width: 30px; 
+    height: 30px; 
+    cursor: pointer; 
+    transition: transform 0.3s ease; 
+	background: none; 
 }
 
 .profile-edit {
