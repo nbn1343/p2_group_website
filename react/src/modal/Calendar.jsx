@@ -23,6 +23,8 @@ function Calendar({ userData, groups, externalGroupFilter, setExternalGroupFilte
   const [newEventLocation, setNewEventLocation] = useState("");
   const [newEventGroups, setNewEventGroups] = useState([]);
 
+  const isLeader = userData?.role === "leader";
+
   // Use group names from props for the select options
   const availableGroups = groups
     ? groups.map(group => ({
@@ -520,13 +522,15 @@ function Calendar({ userData, groups, externalGroupFilter, setExternalGroupFilte
               </div>
             )}
           </div>
-          <button
-            className="widget-action-btn"
-            onClick={() => setShowAddEventForm(true)}
-            style={{ marginLeft: "8px" }}
-          >
-            + Add
-          </button>
+          {isLeader && (
+            <button
+              className="widget-action-btn"
+              onClick={() => setShowAddEventForm(true)}
+              style={{ marginLeft: "8px" }}
+            >
+              + Add
+            </button>
+		  )}
         </div>
       </div>
       {/* ───── CALENDAR CONTENT ───── */}

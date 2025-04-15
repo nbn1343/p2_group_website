@@ -144,7 +144,6 @@ function App() {
 		}
 	}
 
-	// Otherwise show the landing page with login/register functionality
 	return (
 		<div
 			className={`${accessibilityMode.highContrast ? "high-contrast" : ""} ${

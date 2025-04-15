@@ -13,17 +13,33 @@ function MemberHome({ userData, onLogout }) {
 	// Reminders
 	const [showAddReminderForm, setShowAddReminderForm] = useState(false);
 
-	// Mock data for groups
+	// Define group colors
+	const GROUP_COLORS = [
+		"#4ED1C4", // Teal (Youth Ministry)
+		"#FFB347", // Orange (Worship Team)
+		"#6C63FF", // Purple (Bible Study)
+		"#FF6B6B", // Red (Outreach Committee)
+		"#FFD166", // Yellow
+		"#43AA8B", // Green
+		"#3A86FF", // Blue
+	];
+
+	// Mock data for groups with colors
 	const [groups, setGroups] = useState([
-		{ id: 1, name: "Youth Ministry", members: 24, role: "Member", description: "Weekly activities and events for our church youth.", meetingTime: "Sundays at 4 PM", location: "Fellowship Hall" },
-		{ id: 2, name: "Worship Team", members: 12, role: "Leader", description: "Music ministry team for Sunday services and special events.", meetingTime: "Thursdays at 7 PM", location: "Sanctuary" },
-		{ id: 3, name: "Bible Study", members: 18, role: "Member", description: "Weekly Bible study focusing on different books and themes.", meetingTime: "Wednesdays at 6:30 PM", location: "Room 201" },
-		{ id: 4, name: "Outreach Committee", members: 8, role: "Member", description: "Planning and coordinating community outreach events.", meetingTime: "First Monday of month at 6 PM", location: "Conference Room" },
+		{ id: 1, name: "Youth Ministry", members: 24, role: "Member", description: "Weekly activities and events for our church youth.", meetingTime: "Sundays at 4 PM", location: "Fellowship Hall", color: GROUP_COLORS[0] },
+		{ id: 2, name: "Worship Team", members: 12, role: "Leader", description: "Music ministry team for Sunday services and special events.", meetingTime: "Thursdays at 7 PM", location: "Sanctuary", color: GROUP_COLORS[1] },
+		{ id: 3, name: "Bible Study", members: 18, role: "Member", description: "Weekly Bible study focusing on different books and themes.", meetingTime: "Wednesdays at 6:30 PM", location: "Room 201", color: GROUP_COLORS[2] },
+		{ id: 4, name: "Outreach Committee", members: 8, role: "Member", description: "Planning and coordinating community outreach events.", meetingTime: "First Monday of month at 6 PM", location: "Conference Room", color: GROUP_COLORS[3] },
 	]);
+
+	// Calendar filter and view state
+	const [calendarGroupFilter, setCalendarGroupFilter] = useState([]);
+	const [calendarView, setCalendarView] = useState("calendar");
 
 	// Chat state
 	const [isChatOpen, setIsChatOpen] = useState(false);
 	const [activeChatId, setActiveChatId] = useState(null);
+	const [activeChatGroup, setActiveChatGroup] = useState(null);
 
 	// Group modal states
 	const [showJoinGroupModal, setShowJoinGroupModal] = useState(false);
@@ -33,10 +49,10 @@ function MemberHome({ userData, onLogout }) {
 
 	// Profile edit states
 	const [editProfile, setEditProfile] = useState(false);
-	const [name, setName] = useState(userData.user_metadata?.first_name || '');
-	const [email, setEmail] = useState(userData.user_metadata?.email || '');
-	const [phone, setPhone] = useState(userData.user_metadata?.phone || '');
-	const [role, setRole] = useState(userData.user_metadata?.role || '');
+	const [name, setName] = useState(userData?.user_metadata?.first_name || '');
+	const [email, setEmail] = useState(userData?.user_metadata?.email || '');
+	const [phone, setPhone] = useState(userData?.user_metadata?.phone || '');
+	const [role, setRole] = useState(userData?.user_metadata?.role || '');
 	const [profileImage, setProfileImage] = useState(null);
 
 	// Open join group modal
@@ -70,7 +86,8 @@ function MemberHome({ userData, onLogout }) {
 				role: "Member",
 				description: "Daily prayer meetings and prayer request coordination.",
 				meetingTime: "Tuesdays at 7 AM",
-				location: "Prayer Room"
+				location: "Prayer Room",
+				color: GROUP_COLORS[groups.length % GROUP_COLORS.length] // Assign next color in rotation
 			};
 			setGroups([...groups, newGroup]);
 			setShowJoinGroupModal(false);
@@ -104,9 +121,28 @@ function MemberHome({ userData, onLogout }) {
 		}
 	};
 
-	// Open chat with specific person/group
-	const openChat = (chatId) => {
-		setActiveChatId(chatId);
+	// Open chat with specific group
+	const handleMessageGroup = (group) => {
+		setActiveChatId(group.name);
+		setActiveChatGroup(group);
+		setIsChatOpen(true);
+		setShowJoinGroupModal(false);
+	};
+
+	// Handler for "View Calendar" button in group modal
+	const handleViewCalendar = (group) => {
+		setCalendarGroupFilter([group.name]);
+		setCalendarView("calendar");
+		setShowJoinGroupModal(false);
+	};
+
+	// Open chat icon clicked
+	const openGeneralChat = () => {
+		// If no chat is active, open the first group by default
+		if (!activeChatGroup) {
+			setActiveChatId(groups[0].name);
+			setActiveChatGroup(groups[0]);
+		}
 		setIsChatOpen(true);
 	};
 
@@ -189,9 +225,16 @@ function MemberHome({ userData, onLogout }) {
 			<div className="widgets-container">
 				{/* Calendar Widget - Left */}
 				<div className="widget calendar-widget">
-					<Calendar userData={userData} />
+					<Calendar 
+						userData={userData} 
+						groups={groups}
+						externalGroupFilter={calendarGroupFilter}
+						setExternalGroupFilter={setCalendarGroupFilter}
+						externalCalendarView={calendarView}
+						setExternalCalendarView={setCalendarView}
+					/>
 				</div>
-
+				
 				<div className="widget reminders-widget">
 					<div className="widget-header">
 						<h2>Reminders</h2>
@@ -231,7 +274,12 @@ function MemberHome({ userData, onLogout }) {
 										className="group-item"
 										onClick={() => openGroupDetails(group)}
 									>
-										<div className="group-icon">{group.name.charAt(0)}</div>
+										<div 
+                                            className="group-icon"
+                                            style={{ backgroundColor: group.color }}
+                                        >
+                                            {group.name.charAt(0)}
+                                        </div>
 										<div className="group-details">
 											<h3>{group.name}</h3>
 											<p>
@@ -261,11 +309,13 @@ function MemberHome({ userData, onLogout }) {
 					setJoinCode={setJoinCode}
 					joinError={joinError}
 					onJoinGroup={handleJoinGroup}
+					onMessageGroup={handleMessageGroup}
+					onViewCalendar={handleViewCalendar}
 				/>
 			)}
 
 			{/* Chat Icon */}
-			<div className="chat-icon" onClick={() => setIsChatOpen(!isChatOpen)}>
+			<div className="chat-icon" onClick={openGeneralChat}>
 				<img
 					src="/message-icon.png"
 					alt="Messages"
@@ -277,7 +327,13 @@ function MemberHome({ userData, onLogout }) {
 			{isChatOpen && (
 				<ChatModal
 					onClose={() => setIsChatOpen(false)}
+					activeChatGroup={activeChatGroup}
 					activeChatId={activeChatId}
+					groups={groups}
+					onChangeChat={(group) => {
+						setActiveChatId(group.name);
+						setActiveChatGroup(group);
+					}}
 				/>
 			)}
 		</div>
